@@ -1,10 +1,13 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 import { ArrowRight, Check, Package, Truck } from "lucide-react";
+import { useOrders } from "@/store/orders";
+import { formatPrice } from "@/lib/utils";
 
 function addBusinessDays(from: Date, days: number) {
   const d = new Date(from);
@@ -36,6 +39,12 @@ function OrderSuccessContent() {
     () => sp.get("o") ?? `NX-${Date.now().toString(36).toUpperCase()}`,
   );
   const [delivery] = useState(() => deliveryEstimate(sp.get("ship")));
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+  const orders = useOrders((s) => s.orders);
+  const order = hydrated
+    ? orders.find((o) => o.id === orderId)
+    : undefined;
 
   return (
     <div className="grid place-items-center pt-24 md:pt-32">
@@ -65,6 +74,59 @@ function OrderSuccessContent() {
             Estimated delivery: {delivery}
           </div>
         </div>
+        {order && (
+          <div className="mx-auto mt-8 max-w-xl rounded-3xl border border-border bg-card p-6 text-left backdrop-blur-xl">
+            <div className="text-xs uppercase tracking-widest text-text-2">
+              Order summary
+            </div>
+            <ul className="mt-4 space-y-3">
+              {order.lines.map((l) => (
+                <li key={l.id} className="flex items-center gap-3">
+                  <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-card-2">
+                    <Image
+                      src={l.image}
+                      alt={l.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm text-text">{l.name}</div>
+                    <div className="text-xs text-text-2">× {l.quantity}</div>
+                  </div>
+                  <div className="text-sm font-semibold">
+                    {formatPrice(l.price * l.quantity)}
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <div className="my-4 h-px bg-card-2" />
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-text-2">Subtotal</span>
+                <span>{formatPrice(order.subtotal)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-text-2">Shipping</span>
+                <span>
+                  {order.shipping === 0 ? "Free" : formatPrice(order.shipping)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-text-2">Tax</span>
+                <span>{formatPrice(order.tax)}</span>
+              </div>
+            </div>
+            <div className="my-4 h-px bg-card-2" />
+            <div className="flex items-center justify-between">
+              <span className="text-text">Total</span>
+              <span className="font-display text-lg font-semibold">
+                {formatPrice(order.total)}
+              </span>
+            </div>
+          </div>
+        )}
+
         <div className="mt-10 flex flex-wrap justify-center gap-3">
           <Link href="/account" className="btn btn-primary">
             Track order <ArrowRight size={16} />

@@ -16,12 +16,12 @@ import {
   Truck,
 } from "lucide-react";
 import { useCart } from "@/store/cart";
+import { useOrders, type Order, type ShipMethod } from "@/store/orders";
+import { useAddresses } from "@/store/addresses";
 import { formatPrice } from "@/lib/utils";
 import { FREE_SHIPPING_THRESHOLD, STANDARD_SHIPPING } from "@/lib/constants";
 
 const steps = ["Address", "Shipping", "Payment", "Review"] as const;
-
-type ShipMethod = "standard" | "express" | "sameday";
 
 type Address = {
   first: string;
@@ -68,6 +68,26 @@ export default function CheckoutPage() {
     if (lines.length === 0 && !placedId) router.replace("/cart");
   }, [lines.length, placedId, router]);
 
+  // Prefill from the default saved address once, client-side only
+  // (persisted stores are not available during SSR).
+  useEffect(() => {
+    const def = useAddresses.getState().items.find((i) => i.isDefault);
+    if (!def) return;
+    setAddr((a) => {
+      const untouched = Object.values(a).every((v) => !v.trim());
+      if (!untouched) return a;
+      return {
+        first: def.first,
+        last: def.last,
+        email: def.email,
+        address: def.address,
+        city: def.city,
+        postal: def.postal,
+        country: def.country,
+      };
+    });
+  }, []);
+
   const setField =
     (key: keyof Address) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
@@ -93,6 +113,35 @@ export default function CheckoutPage() {
       return;
     }
     const id = `NX-${Date.now().toString(36).toUpperCase()}`;
+    const order: Order = {
+      id,
+      placedAt: new Date().toISOString(),
+      lines: lines.map((l) => ({
+        id: String(l.id),
+        slug: l.slug,
+        name: l.name,
+        price: l.price,
+        image: l.image,
+        quantity: l.quantity,
+      })),
+      subtotal,
+      shipping,
+      tax,
+      total,
+      ship,
+      address: { ...addr },
+      status: "processing",
+    };
+    useOrders.getState().addOrder(order);
+    const saved = useAddresses.getState().items;
+    const alreadySaved = saved.some(
+      (s) =>
+        s.address.trim().toLowerCase() === addr.address.trim().toLowerCase() &&
+        s.postal.trim().toLowerCase() === addr.postal.trim().toLowerCase(),
+    );
+    if (saved.length === 0 || !alreadySaved) {
+      useAddresses.getState().add({ ...addr, label: "Home" });
+    }
     setPlacedId(id);
     setSubmitting(true);
     useCart.getState().clear();
