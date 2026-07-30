@@ -31,6 +31,15 @@ import { useWishlist } from "@/store/wishlist";
 import { useOrders, type Order } from "@/store/orders";
 import { useAddresses, type SavedAddress } from "@/store/addresses";
 import { usePayments, type CardBrand, type PaymentMethod } from "@/store/payments";
+import {
+  cardDigits,
+  detectBrand,
+  formatCardNumber,
+  formatExpiry,
+  isFutureExpiry,
+  isValidCardNumber,
+  parseExpiry,
+} from "@/lib/card";
 import { EditProfileModal } from "./edit-profile-modal";
 
 export type AccountViewProps = {
@@ -695,16 +704,6 @@ function Field({
 
 /* --------------------------------------------------------------- payments */
 
-function deriveBrand(digits: string): CardBrand {
-  if (digits.startsWith("4")) return "visa";
-  const two = Number(digits.slice(0, 2));
-  if (two >= 51 && two <= 55) return "mastercard";
-  if (digits.startsWith("34") || digits.startsWith("37")) return "amex";
-  if (digits.startsWith("60") || digits.startsWith("65") || digits.startsWith("81"))
-    return "rupay";
-  return "card";
-}
-
 function brandLabel(brand: CardBrand) {
   return brand.charAt(0).toUpperCase() + brand.slice(1);
 }
@@ -828,52 +827,32 @@ function CardForm({
   const [expiry, setExpiry] = useState("");
   const [error, setError] = useState("");
 
-  function onNumberChange(v: string) {
-    const digits = v.replace(/\D/g, "").slice(0, 16);
-    setNumber(digits.replace(/(\d{4})(?=\d)/g, "$1 "));
-  }
-
-  function onExpiryChange(v: string) {
-    const digits = v.replace(/\D/g, "").slice(0, 4);
-    setExpiry(digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits);
-  }
-
   function submit(e: FormEvent) {
     e.preventDefault();
-    const digits = number.replace(/\s/g, "");
+    const digits = cardDigits(number);
     if (!holder.trim()) {
       setError("Enter the cardholder name.");
       return;
     }
-    if (digits.length < 15 || digits.length > 16) {
-      setError("Card number must be 15–16 digits.");
+    if (!isValidCardNumber(digits)) {
+      setError("Enter a valid card number.");
       return;
     }
-    const match = /^(\d{2})\/(\d{2})$/.exec(expiry);
-    if (!match) {
-      setError("Expiry must be in MM/YY format.");
+    const exp = parseExpiry(expiry);
+    if (!exp) {
+      setError("Expiry must be in MM / YY format.");
       return;
     }
-    const expMonth = Number(match[1]);
-    const expYear = 2000 + Number(match[2]);
-    if (expMonth < 1 || expMonth > 12) {
-      setError("Expiry month must be between 01 and 12.");
-      return;
-    }
-    const now = new Date();
-    if (
-      expYear < now.getFullYear() ||
-      (expYear === now.getFullYear() && expMonth < now.getMonth() + 1)
-    ) {
+    if (!isFutureExpiry(exp.month, exp.year)) {
       setError("This card has already expired.");
       return;
     }
     setError("");
     onSubmit({
-      brand: deriveBrand(digits),
+      brand: detectBrand(digits),
       last4: digits.slice(-4),
-      expMonth,
-      expYear,
+      expMonth: exp.month,
+      expYear: exp.year,
       holder: holder.trim(),
     });
     // Discard the full number immediately after deriving brand + last4.
@@ -907,7 +886,7 @@ function CardForm({
           className="sm:col-span-2"
           label="Card number"
           value={number}
-          onChange={onNumberChange}
+          onChange={(v) => setNumber(formatCardNumber(v))}
           placeholder="4242 4242 4242 4242"
           inputMode="numeric"
           maxLength={19}
@@ -915,10 +894,10 @@ function CardForm({
         <Field
           label="Expiry"
           value={expiry}
-          onChange={onExpiryChange}
-          placeholder="MM/YY"
+          onChange={(v) => setExpiry(formatExpiry(v))}
+          placeholder="MM / YY"
           inputMode="numeric"
-          maxLength={5}
+          maxLength={7}
         />
       </div>
       <p className="mt-3 text-xs text-text-2">

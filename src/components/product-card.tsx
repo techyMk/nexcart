@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Heart, Plus, Star, Sparkles, Truck } from "lucide-react";
@@ -18,10 +19,12 @@ const badgeStyles: Record<string, string> = {
 };
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
+  const router = useRouter();
   const add = useCart((s) => s.add);
   const wishlisted = useWishlist((s) => s.items.some((i) => i.id === product.id));
   const toggleWishlist = useWishlist((s) => s.toggle);
   const [added, setAdded] = useState(false);
+  const [buying, setBuying] = useState(false);
 
   return (
     <motion.div
@@ -89,31 +92,56 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           <Heart size={15} className={wishlisted ? "fill-current" : ""} />
         </button>
 
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            add({
-              id: product.id,
-              slug: product.slug,
-              name: product.name,
-              price: product.price,
-              image: product.images[0],
-            });
-            setAdded(true);
-            setTimeout(() => setAdded(false), 900);
-          }}
-          className="pointer-events-none absolute inset-x-3 bottom-3 inline-flex translate-y-3 items-center justify-center gap-2 rounded-full bg-white text-slate-950 opacity-0 ring-1 ring-white/20 transition-all duration-300 hover:brightness-95 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 focus-visible:pointer-events-auto focus-visible:translate-y-0 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-primary-400 max-md:pointer-events-auto max-md:translate-y-0 max-md:opacity-100 py-2.5 text-sm font-semibold"
-        >
-          {added ? (
-            <>
-              <Check size={15} /> Added
-            </>
-          ) : (
-            <>
-              <Plus size={15} /> Add to cart
-            </>
-          )}
-        </button>
+        <div className="pointer-events-none absolute inset-x-2.5 bottom-2.5 flex translate-y-3 gap-1.5 opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 focus-within:pointer-events-auto focus-within:translate-y-0 focus-within:opacity-100 max-md:pointer-events-auto max-md:translate-y-0 max-md:opacity-100">
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              add({
+                id: product.id,
+                slug: product.slug,
+                name: product.name,
+                price: product.price,
+                image: product.images[0],
+              });
+              setAdded(true);
+              setTimeout(() => setAdded(false), 900);
+            }}
+            className="inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-white px-2 py-2.5 text-xs font-semibold text-slate-950 ring-1 ring-white/20 transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400"
+          >
+            {added ? (
+              <>
+                <Check size={13} /> Added
+              </>
+            ) : (
+              <>
+                <Plus size={13} /> Add to cart
+              </>
+            )}
+          </button>
+          <button
+            disabled={buying || product.stock === 0}
+            onClick={(e) => {
+              e.preventDefault();
+              if (buying || product.stock === 0) return;
+              setBuying(true);
+              const cart = useCart.getState();
+              cart.add({
+                id: product.id,
+                slug: product.slug,
+                name: product.name,
+                price: product.price,
+                image: product.images[0],
+              });
+              // add() opens the cart drawer; close it so it doesn't flash
+              // over the checkout navigation.
+              cart.closeCart();
+              router.push("/checkout");
+            }}
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-gradient-brand px-3 py-2.5 text-xs font-semibold text-white ring-1 ring-white/20 transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 disabled:opacity-60"
+          >
+            Buy now
+          </button>
+        </div>
       </div>
 
       <div className="p-4">

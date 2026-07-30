@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   AnimatePresence,
   motion,
@@ -12,6 +13,7 @@ import {
 } from "framer-motion";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import { products, type Product } from "@/lib/data";
+import { useCart } from "@/store/cart";
 
 const AUTOPLAY_MS = 6000;
 const SWIPE_THRESHOLD = 90;
@@ -75,11 +77,13 @@ function GradientName({ name, gradient }: { name: string; gradient: string }) {
 }
 
 export function Hero() {
+  const router = useRouter();
   const reducedMotion = useReducedMotion();
   const [[index, direction], setSlide] = useState<[number, number]>([0, 0]);
   const [hovered, setHovered] = useState(false);
   const [pressed, setPressed] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [buying, setBuying] = useState(false);
   // Bumped whenever autoplay (re)starts so the progress dot restarts in sync.
   const [epoch, setEpoch] = useState(0);
 
@@ -277,9 +281,33 @@ export function Hero() {
                   variants={itemVariants}
                   className="mt-7 flex flex-wrap items-center gap-3"
                 >
-                  <Link href={`/product/${p.slug}`} className="btn btn-primary">
+                  <button
+                    type="button"
+                    disabled={buying || p.stock === 0}
+                    onClick={() => {
+                      if (buying) return;
+                      setBuying(true);
+                      const cart = useCart.getState();
+                      cart.add(
+                        {
+                          id: p.id,
+                          slug: p.slug,
+                          name: p.name,
+                          price: p.price,
+                          image: p.images[0],
+                          stock: p.stock,
+                        },
+                        1,
+                      );
+                      // add() opens the cart drawer; close it so it doesn't
+                      // flash over the checkout navigation.
+                      cart.closeCart();
+                      router.push("/checkout");
+                    }}
+                    className="btn btn-primary disabled:opacity-40"
+                  >
                     Buy now <ArrowRight size={16} />
-                  </Link>
+                  </button>
                   <Link href={`/product/${p.slug}`} className="btn btn-ghost">
                     View details
                   </Link>

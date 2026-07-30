@@ -8,6 +8,7 @@ import {
   Apple,
   Check,
   CreditCard,
+  Fingerprint,
   Loader2,
   Lock,
   RotateCcw,
@@ -18,6 +19,16 @@ import {
 import { useCart } from "@/store/cart";
 import { useOrders, type Order, type ShipMethod } from "@/store/orders";
 import { useAddresses } from "@/store/addresses";
+import { usePayments, type CardBrand } from "@/store/payments";
+import {
+  cardDigits,
+  detectBrand,
+  formatCardNumber,
+  formatExpiry,
+  isFutureExpiry,
+  isValidCardNumber,
+  parseExpiry,
+} from "@/lib/card";
 import { formatPrice } from "@/lib/utils";
 import { FREE_SHIPPING_THRESHOLD, STANDARD_SHIPPING } from "@/lib/constants";
 
@@ -43,6 +54,14 @@ const emptyAddress: Address = {
   country: "",
 };
 
+type PayField = "number" | "holder" | "expiry" | "cvc" | "paypal" | "upi";
+
+const UPI_PATTERN = /^[\w.-]{2,}@[a-zA-Z]{2,}$/;
+
+function brandLabel(brand: CardBrand) {
+  return brand.charAt(0).toUpperCase() + brand.slice(1);
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
@@ -54,6 +73,27 @@ export default function CheckoutPage() {
   );
   const [submitting, setSubmitting] = useState(false);
   const [placedId, setPlacedId] = useState<string | null>(null);
+
+  // Payment step state. The full card number and CVC live only in this
+  // component's state and are discarded with it — never persisted.
+  const [payErrors, setPayErrors] = useState<Partial<Record<PayField, string>>>(
+    {},
+  );
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardHolder, setCardHolder] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvc, setCardCvc] = useState("");
+  const [payWith, setPayWith] = useState("new"); // saved-card id or "new"
+  const [saveCard, setSaveCard] = useState(true);
+  const [paypalEmail, setPaypalEmail] = useState("");
+  const [upiId, setUpiId] = useState("");
+
+  // Persisted-store reads in render must be hydration-gated (SSR mismatch).
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+  const paymentItems = usePayments((s) => s.items);
+  const savedCards = hydrated ? paymentItems : [];
+
   const { lines } = useCart();
   const subtotal = lines.reduce((a, l) => a + l.price * l.quantity, 0);
   const shipping = {
@@ -88,12 +128,28 @@ export default function CheckoutPage() {
     });
   }, []);
 
+  // Pre-select the default saved card once the payments store hydrates.
+  useEffect(() => {
+    if (!hydrated) return;
+    const def = usePayments.getState().items.find((i) => i.isDefault);
+    if (def) setPayWith((cur) => (cur === "new" ? def.id : cur));
+  }, [hydrated]);
+
+  // Prefill the PayPal email from the address step once it's available,
+  // without overwriting anything the user typed themselves.
+  useEffect(() => {
+    setPaypalEmail((v) => (v.trim() ? v : addr.email));
+  }, [addr.email]);
+
   const setField =
     (key: keyof Address) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       setAddr((a) => ({ ...a, [key]: value }));
       setErrors((er) => ({ ...er, [key]: false }));
     };
+
+  const clearPayError = (k: PayField) =>
+    setPayErrors((er) => (er[k] ? { ...er, [k]: undefined } : er));
 
   const validateAddress = () => {
     const missing: Partial<Record<keyof Address, boolean>> = {};
@@ -104,12 +160,45 @@ export default function CheckoutPage() {
     return Object.keys(missing).length === 0;
   };
 
-  const validateStep = (s: number) => (s === 0 ? validateAddress() : true);
+  const validatePayment = () => {
+    const e: Partial<Record<PayField, string>> = {};
+    if (pm === "card") {
+      const usingSaved =
+        payWith !== "new" &&
+        usePayments.getState().items.some((c) => c.id === payWith);
+      if (!usingSaved) {
+        if (payWith !== "new") setPayWith("new"); // selected card was removed
+        if (!isValidCardNumber(cardDigits(cardNumber)))
+          e.number = "Enter a valid card number";
+        if (!cardHolder.trim()) e.holder = "This field is required";
+        const exp = parseExpiry(cardExpiry);
+        if (!exp) e.expiry = "Enter expiry as MM / YY";
+        else if (!isFutureExpiry(exp.month, exp.year))
+          e.expiry = "This card has expired";
+        if (!/^\d{3,4}$/.test(cardCvc)) e.cvc = "Enter the 3–4 digit code";
+      }
+    } else if (pm === "paypal") {
+      if (!/\S+@\S+\.\S+/.test(paypalEmail.trim()))
+        e.paypal = "Enter a valid email address";
+    } else if (pm === "upi") {
+      if (!UPI_PATTERN.test(upiId.trim()))
+        e.upi = "Enter a valid UPI ID like name@bank";
+    }
+    setPayErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const validateStep = (s: number) =>
+    s === 0 ? validateAddress() : s === 2 ? validatePayment() : true;
 
   const placeOrder = () => {
     if (submitting) return;
     if (!validateAddress()) {
       setStep(0);
+      return;
+    }
+    if (!validatePayment()) {
+      setStep(2);
       return;
     }
     const id = `NX-${Date.now().toString(36).toUpperCase()}`;
@@ -141,6 +230,21 @@ export default function CheckoutPage() {
     );
     if (saved.length === 0 || !alreadySaved) {
       useAddresses.getState().add({ ...addr, label: "Home" });
+    }
+    // Save the new card if asked to — brand + last4 only, never the full
+    // number or CVC, which are discarded with the rest of the form state.
+    if (pm === "card" && payWith === "new" && saveCard) {
+      const digits = cardDigits(cardNumber);
+      const exp = parseExpiry(cardExpiry);
+      if (exp) {
+        usePayments.getState().add({
+          brand: detectBrand(digits),
+          last4: digits.slice(-4),
+          expMonth: exp.month,
+          expYear: exp.year,
+          holder: cardHolder.trim(),
+        });
+      }
     }
     setPlacedId(id);
     setSubmitting(true);
@@ -349,7 +453,10 @@ export default function CheckoutPage() {
                   ].map((p) => (
                     <button
                       key={p.id}
-                      onClick={() => setPm(p.id as typeof pm)}
+                      onClick={() => {
+                        setPm(p.id as typeof pm);
+                        setPayErrors({});
+                      }}
                       className={`rounded-2xl border p-4 text-left transition ${
                         pm === p.id
                           ? "border-primary-400 bg-primary-500/10 ring-2 ring-primary-400/30"
@@ -363,20 +470,200 @@ export default function CheckoutPage() {
                 </div>
                 {pm === "card" && (
                   <>
-                    <div className="grid gap-3 md:grid-cols-2">
-                      <Input
-                        label="Card number"
-                        placeholder="4242 4242 4242 4242"
-                        className="md:col-span-2"
-                      />
-                      <Input label="Cardholder" placeholder="Alex Vance" />
-                      <div className="grid grid-cols-2 gap-3">
-                        <Input label="Expiry" placeholder="MM / YY" />
-                        <Input label="CVC" placeholder="123" />
+                    {savedCards.length > 0 && (
+                      <div className="space-y-2">
+                        {savedCards.map((c) => (
+                          <label
+                            key={c.id}
+                            className={`flex cursor-pointer items-center justify-between gap-3 rounded-2xl border p-4 transition ${
+                              payWith === c.id
+                                ? "border-primary-400 bg-primary-500/10"
+                                : "border-border bg-card hover:border-text/20"
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <input
+                                type="radio"
+                                name="paycard"
+                                checked={payWith === c.id}
+                                onChange={() => setPayWith(c.id)}
+                                className="accent-primary-500"
+                              />
+                              <CreditCard
+                                size={16}
+                                className="text-primary-300"
+                              />
+                              <div>
+                                <div className="text-sm font-medium">
+                                  {brandLabel(c.brand)} •••• {c.last4}
+                                </div>
+                                <div className="text-xs text-text-2">
+                                  Exp {String(c.expMonth).padStart(2, "0")}/
+                                  {String(c.expYear % 100).padStart(2, "0")}
+                                </div>
+                              </div>
+                            </div>
+                            {c.isDefault && (
+                              <span className="chip chip-success">
+                                <Check size={11} /> Default
+                              </span>
+                            )}
+                          </label>
+                        ))}
+                        <label
+                          className={`flex cursor-pointer items-center gap-3 rounded-2xl border p-4 transition ${
+                            payWith === "new"
+                              ? "border-primary-400 bg-primary-500/10"
+                              : "border-border bg-card hover:border-text/20"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="paycard"
+                            checked={payWith === "new"}
+                            onChange={() => setPayWith("new")}
+                            className="accent-primary-500"
+                          />
+                          <span className="text-sm font-medium">
+                            Use a new card
+                          </span>
+                        </label>
                       </div>
-                    </div>
+                    )}
+                    {(savedCards.length === 0 || payWith === "new") && (
+                      <>
+                        <div className="grid gap-3 md:grid-cols-2">
+                          <Input
+                            label="Card number"
+                            placeholder="4242 4242 4242 4242"
+                            className="md:col-span-2"
+                            inputMode="numeric"
+                            autoComplete="cc-number"
+                            maxLength={19}
+                            value={cardNumber}
+                            onChange={(e) => {
+                              setCardNumber(formatCardNumber(e.target.value));
+                              clearPayError("number");
+                            }}
+                            error={!!payErrors.number}
+                            errorText={payErrors.number}
+                            trailing={
+                              detectBrand(cardDigits(cardNumber)) !== "card"
+                                ? brandLabel(detectBrand(cardDigits(cardNumber)))
+                                : undefined
+                            }
+                          />
+                          <Input
+                            label="Cardholder"
+                            placeholder="Alex Vance"
+                            autoComplete="cc-name"
+                            value={cardHolder}
+                            onChange={(e) => {
+                              setCardHolder(e.target.value);
+                              clearPayError("holder");
+                            }}
+                            error={!!payErrors.holder}
+                            errorText={payErrors.holder}
+                          />
+                          <div className="grid grid-cols-2 gap-3">
+                            <Input
+                              label="Expiry"
+                              placeholder="MM / YY"
+                              inputMode="numeric"
+                              autoComplete="cc-exp"
+                              maxLength={7}
+                              value={cardExpiry}
+                              onChange={(e) => {
+                                setCardExpiry(formatExpiry(e.target.value));
+                                clearPayError("expiry");
+                              }}
+                              error={!!payErrors.expiry}
+                              errorText={payErrors.expiry}
+                            />
+                            <Input
+                              label="CVC"
+                              placeholder="123"
+                              type="password"
+                              inputMode="numeric"
+                              autoComplete="cc-csc"
+                              maxLength={4}
+                              value={cardCvc}
+                              onChange={(e) => {
+                                setCardCvc(
+                                  e.target.value.replace(/\D/g, "").slice(0, 4),
+                                );
+                                clearPayError("cvc");
+                              }}
+                              error={!!payErrors.cvc}
+                              errorText={payErrors.cvc}
+                            />
+                          </div>
+                        </div>
+                        <label className="flex cursor-pointer items-center gap-2 text-sm text-text-2">
+                          <input
+                            type="checkbox"
+                            checked={saveCard}
+                            onChange={(e) => setSaveCard(e.target.checked)}
+                            className="accent-primary-500"
+                          />
+                          Save this card for next time
+                        </label>
+                      </>
+                    )}
                     <div className="text-xs text-text-2">Powered by Stripe</div>
                   </>
+                )}
+                {pm === "paypal" && (
+                  <>
+                    <Input
+                      label="PayPal email"
+                      placeholder="you@email.com"
+                      type="email"
+                      autoComplete="email"
+                      value={paypalEmail}
+                      onChange={(e) => {
+                        setPaypalEmail(e.target.value);
+                        clearPayError("paypal");
+                      }}
+                      error={!!payErrors.paypal}
+                      errorText={payErrors.paypal}
+                    />
+                    <p className="text-xs text-text-2">
+                      You&apos;ll be redirected to PayPal to approve this
+                      payment.
+                    </p>
+                  </>
+                )}
+                {pm === "upi" && (
+                  <>
+                    <Input
+                      label="UPI ID"
+                      placeholder="name@bank"
+                      value={upiId}
+                      onChange={(e) => {
+                        setUpiId(e.target.value);
+                        clearPayError("upi");
+                      }}
+                      error={!!payErrors.upi}
+                      errorText={payErrors.upi}
+                    />
+                    <p className="text-xs text-text-2">
+                      You&apos;ll get a collect request in your UPI app to
+                      approve this payment.
+                    </p>
+                  </>
+                )}
+                {pm === "apple" && (
+                  <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4">
+                    <Fingerprint
+                      size={16}
+                      className="shrink-0 text-primary-300"
+                    />
+                    <p className="text-sm text-text-2">
+                      You&apos;ll confirm with Face ID or Touch ID when the
+                      Apple Pay sheet opens.
+                    </p>
+                  </div>
                 )}
               </FormSection>
             )}
@@ -499,27 +786,38 @@ function FormSection({
 function Input({
   label,
   error,
+  errorText,
+  trailing,
   className,
   ...rest
 }: React.InputHTMLAttributes<HTMLInputElement> & {
   label: string;
   error?: boolean;
+  errorText?: string;
+  trailing?: string;
 }) {
   return (
     <label className={`block ${className ?? ""}`}>
       <span className="mb-1.5 block text-xs uppercase tracking-widest text-text-2">
         {label}
       </span>
-      <input
-        {...rest}
-        aria-invalid={error || undefined}
-        className={`w-full rounded-xl border bg-card px-3 py-2.5 text-sm outline-none transition focus:border-primary-400/70 focus:ring-2 focus:ring-primary-400/20 ${
-          error ? "border-rose-500/50" : "border-border"
-        }`}
-      />
+      <span className="relative block">
+        <input
+          {...rest}
+          aria-invalid={error || undefined}
+          className={`w-full rounded-xl border bg-card px-3 py-2.5 text-sm outline-none transition focus:border-primary-400/70 focus:ring-2 focus:ring-primary-400/20 ${
+            trailing ? "pr-20" : ""
+          } ${error ? "border-rose-500/50" : "border-border"}`}
+        />
+        {trailing && (
+          <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-medium text-text-2">
+            {trailing}
+          </span>
+        )}
+      </span>
       {error && (
         <span className="mt-1 block text-xs text-rose-300">
-          This field is required
+          {errorText ?? "This field is required"}
         </span>
       )}
     </label>

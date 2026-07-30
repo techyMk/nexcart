@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -14,6 +15,7 @@ import {
   ShoppingBag,
   Star,
   Truck,
+  Zap,
 } from "lucide-react";
 import { type Product } from "@/lib/data";
 import { formatPrice } from "@/lib/utils";
@@ -28,10 +30,12 @@ export function ProductDetail({
   product: Product;
   related: Product[];
 }) {
+  const router = useRouter();
   const [active, setActive] = useState(0);
   const [qty, setQty] = useState(1);
   const [color, setColor] = useState(product.colors?.[0]?.name);
   const [tab, setTab] = useState<"overview" | "specs" | "reviews">("overview");
+  const [navigating, setNavigating] = useState(false);
   const add = useCart((s) => s.add);
   const wishlisted = useWishlist((s) => s.items.some((i) => i.id === product.id));
   const toggleWishlist = useWishlist((s) => s.toggle);
@@ -201,6 +205,30 @@ export function ProductDetail({
                 </button>
               </div>
               <button
+                disabled={product.stock === 0 || navigating}
+                onClick={() => {
+                  if (navigating) return;
+                  setNavigating(true);
+                  add(
+                    {
+                      id: product.id,
+                      slug: product.slug,
+                      name: product.name,
+                      price: product.price,
+                      image: product.images[0],
+                    },
+                    qty,
+                  );
+                  // add() opens the cart drawer; close it before navigating so
+                  // it doesn't flash over the checkout transition.
+                  useCart.getState().closeCart();
+                  router.push("/checkout");
+                }}
+                className="btn btn-primary flex-1 min-w-[160px] disabled:opacity-40"
+              >
+                <Zap size={14} /> Buy now
+              </button>
+              <button
                 disabled={product.stock === 0}
                 onClick={() => {
                   add(
@@ -214,7 +242,7 @@ export function ProductDetail({
                     qty,
                   );
                 }}
-                className="btn btn-primary flex-1 min-w-[200px] disabled:opacity-40"
+                className="btn btn-ghost flex-1 min-w-[200px] disabled:opacity-40"
               >
                 {product.stock === 0 ? (
                   "Notify me"
