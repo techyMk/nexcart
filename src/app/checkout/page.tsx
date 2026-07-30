@@ -118,16 +118,23 @@ export default function CheckoutPage() {
     label: string;
     desc: string;
     price: string;
+    hint?: string;
   }[] = [
-    {
-      id: "standard",
-      label: "Standard",
-      desc: "3–5 business days",
-      price:
-        subtotal >= FREE_SHIPPING_THRESHOLD
-          ? `Free over $${FREE_SHIPPING_THRESHOLD}`
-          : `$${STANDARD_SHIPPING}`,
-    },
+    subtotal >= FREE_SHIPPING_THRESHOLD
+      ? {
+          id: "standard",
+          label: "Standard",
+          desc: "3–5 business days",
+          price: "Free",
+          hint: `Orders over $${FREE_SHIPPING_THRESHOLD} ship free`,
+        }
+      : {
+          id: "standard",
+          label: "Standard",
+          desc: "3–5 business days",
+          price: `$${STANDARD_SHIPPING}`,
+          hint: `Add $${Math.ceil(FREE_SHIPPING_THRESHOLD - subtotal)} more for free delivery`,
+        },
     { id: "express", label: "Express", desc: "1–2 business days", price: "$14" },
     { id: "sameday", label: "Same-day", desc: "Within 4 hours", price: "$29" },
   ];
@@ -261,7 +268,22 @@ export default function CheckoutPage() {
                         <div className="text-xs text-text-2">{o.desc}</div>
                       </div>
                     </div>
-                    <div className="text-sm font-semibold">{o.price}</div>
+                    <div className="text-right">
+                      <div
+                        className={
+                          o.price === "Free"
+                            ? "text-sm font-semibold text-success"
+                            : "text-sm font-semibold"
+                        }
+                      >
+                        {o.price}
+                      </div>
+                      {o.hint && (
+                        <div className="mt-0.5 text-[11px] text-text-2">
+                          {o.hint}
+                        </div>
+                      )}
+                    </div>
                   </label>
                 ))}
               </FormSection>
