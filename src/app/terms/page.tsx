@@ -2,7 +2,7 @@ import { FileText } from "lucide-react";
 import { LegalPage } from "@/components/legal-page";
 
 export const metadata = {
-  title: "Terms of Service · NexCart",
+  title: "Terms of Service",
   description:
     "The rules of the road when you shop on NexCart — your rights, our responsibilities, and the fine print.",
 };

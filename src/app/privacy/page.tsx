@@ -2,7 +2,7 @@ import { Lock } from "lucide-react";
 import { LegalPage } from "@/components/legal-page";
 
 export const metadata = {
-  title: "Privacy Policy · NexCart",
+  title: "Privacy Policy",
   description:
     "How NexCart collects, uses, and protects your personal data when you shop with us.",
 };

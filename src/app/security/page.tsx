@@ -2,7 +2,7 @@ import { ShieldCheck } from "lucide-react";
 import { LegalPage } from "@/components/legal-page";
 
 export const metadata = {
-  title: "Security · NexCart",
+  title: "Security",
   description:
     "How we secure your account, payments, and data — from encryption to incident response.",
 };
