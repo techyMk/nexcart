@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { products } from "@/lib/data";
@@ -20,16 +18,15 @@ export function NewArrivals() {
               Fresh drops, calibrated to your interests by NexCart Intelligence™.
             </p>
           </div>
-          <Link
-            href="/shop"
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.03] px-4 py-2 text-sm text-text-2 hover:bg-white/[0.06] hover:text-white"
-          >
+          <Link href="/shop" className="btn btn-ghost btn-sm">
             View all <ArrowRight size={14} />
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory -mx-5 px-5 md:-mx-[max(1.25rem,calc((100vw-1280px)/2))] md:px-[max(1.25rem,calc((100vw-1280px)/2))]">
           {recent.map((p, i) => (
-            <ProductCard key={p.id} product={p} index={i} />
+            <div key={p.id} className="w-[260px] shrink-0 snap-start">
+              <ProductCard product={p} index={i} />
+            </div>
           ))}
         </div>
       </div>

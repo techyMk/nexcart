@@ -77,7 +77,7 @@ export default function AdminPayouts() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl">
+        <div className="rounded-2xl border border-border bg-card p-6 backdrop-blur-xl">
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm font-semibold">Balance trend</div>
@@ -100,7 +100,7 @@ export default function AdminPayouts() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl">
+        <div className="rounded-2xl border border-border bg-card p-6 backdrop-blur-xl">
           <div className="text-sm font-semibold">Payout methods</div>
           <div className="mt-4 space-y-2.5">
             <Method
@@ -122,19 +122,19 @@ export default function AdminPayouts() {
               tag="Inactive"
             />
           </div>
-          <button className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-sm hover:bg-white/[0.06]">
+          <button className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-card px-4 py-2.5 text-sm hover:bg-card-2">
             + Add payout method
           </button>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
-        <div className="flex items-center justify-between border-b border-white/[0.06] p-5">
+      <div className="overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-xl">
+        <div className="flex items-center justify-between border-b border-border p-5">
           <div className="text-sm font-semibold">Recent payouts</div>
-          <button className="text-xs text-text-2 hover:text-white">View all →</button>
+          <button className="text-xs text-text-2 hover:text-text">View all →</button>
         </div>
         <table className="w-full text-left text-sm">
-          <thead className="bg-white/[0.02] text-xs uppercase tracking-widest text-text-2">
+          <thead className="bg-card text-xs uppercase tracking-widest text-text-2">
             <tr>
               <th className="px-5 py-3 font-medium">Reference</th>
               <th className="px-5 py-3 font-medium">Date</th>
@@ -143,9 +143,9 @@ export default function AdminPayouts() {
               <th className="px-5 py-3 text-right font-medium">Amount</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/[0.06]">
+          <tbody className="divide-y divide-border">
             {payouts.map(([ref, date, method, status, amount]) => (
-              <tr key={ref as string} className="transition hover:bg-white/[0.02]">
+              <tr key={ref as string} className="transition hover:bg-card">
                 <td className="px-5 py-3 font-mono text-xs">{ref as string}</td>
                 <td className="px-5 py-3 text-text-2">{date as string}</td>
                 <td className="px-5 py-3">{method as string}</td>
@@ -182,7 +182,7 @@ function BalanceCard({
   accent: string;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 backdrop-blur-xl">
+    <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-5 backdrop-blur-xl">
       <div className={`pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full ${accent} opacity-20 blur-3xl`} />
       <div className="text-xs uppercase tracking-widest text-text-2">{title}</div>
       <div className="mt-2 font-display text-3xl font-semibold tracking-tight">
@@ -213,10 +213,10 @@ function Method({
       ? "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30"
       : tag === "Backup"
         ? "bg-primary-500/15 text-primary-200 ring-primary-500/30"
-        : "bg-white/[0.05] text-text-2 ring-white/[0.06]";
+        : "bg-card-2 text-text-2 ring-border";
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-3">
-      <span className="grid h-9 w-9 place-items-center rounded-xl bg-white/[0.04] text-primary-300 ring-1 ring-white/[0.06]">
+    <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
+      <span className="grid h-9 w-9 place-items-center rounded-xl bg-card text-primary-300 ring-1 ring-border">
         <Icon size={14} />
       </span>
       <div className="min-w-0 flex-1">

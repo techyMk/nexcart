@@ -10,6 +10,8 @@ export type CartLine = {
   price: number;
   image: string;
   quantity: number;
+  /** Units available — optional so partially-updated call sites still compile. */
+  stock?: number;
 };
 
 type CartState = {
@@ -40,19 +42,41 @@ export const useCart = create<CartState>()(
           if (found) {
             return {
               lines: s.lines.map((l) =>
-                l.id === line.id ? { ...l, quantity: l.quantity + qty } : l,
+                l.id === line.id
+                  ? {
+                      ...l,
+                      stock: line.stock ?? l.stock,
+                      quantity: Math.min(
+                        found.stock ?? Infinity,
+                        l.quantity + qty,
+                      ),
+                    }
+                  : l,
               ),
               open: true,
             };
           }
-          return { lines: [...s.lines, { ...line, quantity: qty }], open: true };
+          return {
+            lines: [
+              ...s.lines,
+              { ...line, quantity: Math.min(line.stock ?? Infinity, qty) },
+            ],
+            open: true,
+          };
         }),
       remove: (id) =>
         set((s) => ({ lines: s.lines.filter((l) => l.id !== id) })),
       setQty: (id, qty) =>
         set((s) => ({
           lines: s.lines
-            .map((l) => (l.id === id ? { ...l, quantity: Math.max(0, qty) } : l))
+            .map((l) =>
+              l.id === id
+                ? {
+                    ...l,
+                    quantity: Math.min(l.stock ?? Infinity, Math.max(0, qty)),
+                  }
+                : l,
+            )
             .filter((l) => l.quantity > 0),
         })),
       clear: () => set({ lines: [] }),

@@ -29,7 +29,7 @@ export default function AboutPage() {
           <div className="chip mx-auto">
             <Compass size={12} /> About NexCart
           </div>
-          <h1 className="mt-5 font-display text-4xl font-semibold tracking-tight md:text-6xl">
+          <h1 className="page-title mt-5">
             We&apos;re building the{" "}
             <span className="text-gradient-brand">future</span> of how the world
             shops.
@@ -42,11 +42,11 @@ export default function AboutPage() {
         </motion.div>
 
         <section className="section">
-          <div className="grid grid-cols-2 gap-3 rounded-3xl border border-white/[0.06] bg-white/[0.02] p-3 backdrop-blur-xl md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 rounded-3xl border border-border bg-card p-3 backdrop-blur-xl md:grid-cols-4">
             {stats.map((s) => (
               <div
                 key={s.l}
-                className="rounded-2xl px-5 py-6 text-center transition hover:bg-white/[0.03]"
+                className="rounded-2xl px-5 py-6 text-center transition hover:bg-card"
               >
                 <div className="font-display text-3xl font-semibold text-gradient-brand md:text-4xl">
                   {s.v}
@@ -74,7 +74,7 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.05 }}
-                className="rounded-3xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl"
+                className="rounded-3xl border border-border bg-card p-6 backdrop-blur-xl"
               >
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-brand text-white shadow-glow">
                   <v.Icon size={16} />
@@ -87,7 +87,7 @@ export default function AboutPage() {
         </section>
 
         <section className="section">
-          <div className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-r from-primary-700/20 via-accent-purple/15 to-primary-700/20 p-10 text-center md:p-16">
+          <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-r from-primary-700/20 via-accent-purple/15 to-primary-700/20 p-10 text-center md:p-16">
             <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
             <div className="relative">
               <div className="chip mx-auto">
@@ -99,7 +99,10 @@ export default function AboutPage() {
               <p className="mt-3 text-text-2">
                 We&apos;re hiring across engineering, AI, design and ops.
               </p>
-              <a className="btn btn-primary mt-6 inline-flex" href="#">
+              <a
+                className="btn btn-primary mt-6 inline-flex"
+                href="mailto:careers@nexcart.app"
+              >
                 Explore open roles
               </a>
             </div>

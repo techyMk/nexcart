@@ -66,10 +66,10 @@ export function NewsletterForm({
       <form
         onSubmit={onSubmit}
         className={cn(
-          "flex overflow-hidden rounded-full border border-white/[0.08] backdrop-blur-xl",
+          "flex overflow-hidden rounded-full border border-border backdrop-blur-xl transition focus-within:border-primary-400/60 focus-within:ring-2 focus-within:ring-primary-400/20",
           isHero
             ? "mx-auto mt-8 max-w-lg bg-bg/60 p-1.5"
-            : "mt-6 max-w-sm bg-white/[0.03] p-1",
+            : "mt-6 max-w-sm bg-card p-1",
         )}
       >
         <input
@@ -86,10 +86,8 @@ export function NewsletterForm({
           type="submit"
           disabled={state === "loading" || state === "done"}
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-full font-medium text-white shadow-glow transition disabled:cursor-not-allowed disabled:opacity-80",
-            isHero
-              ? "bg-gradient-brand px-5 py-2 text-sm"
-              : "bg-gradient-brand px-4 py-2 text-sm",
+            "btn btn-primary btn-sm shrink-0 disabled:cursor-not-allowed disabled:opacity-80",
+            isHero && "px-5",
           )}
         >
           {state === "loading" ? (

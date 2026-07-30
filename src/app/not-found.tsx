@@ -148,7 +148,7 @@ export default function NotFound() {
               </Link>
               <button onClick={openPalette} className="btn btn-ghost">
                 <Search size={14} /> Search the universe
-                <kbd className="ml-2 rounded border border-white/10 bg-white/[0.04] px-1.5 py-0.5 text-[10px] text-text-2">
+                <kbd className="ml-2 rounded border border-border bg-card px-1.5 py-0.5 text-[10px] text-text-2">
                   ⌘K
                 </kbd>
               </button>
@@ -199,8 +199,8 @@ export default function NotFound() {
                   "radial-gradient(transparent 56%, black 57%, black 62%, transparent 63%)",
               }}
             />
-            <div className="absolute inset-6 rounded-full border border-white/[0.06]" />
-            <div className="absolute inset-12 rounded-full border border-white/[0.04]" />
+            <div className="absolute inset-6 rounded-full border border-border" />
+            <div className="absolute inset-12 rounded-full border border-border" />
 
             {/* glow */}
             <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-electric opacity-30 blur-3xl" />
@@ -252,9 +252,9 @@ export default function NotFound() {
                   >
                     <Link
                       href={`/product/${p.slug}`}
-                      className="group flex items-center gap-2 rounded-2xl border border-white/[0.08] bg-bg/70 p-2 pr-3 shadow-card backdrop-blur-xl transition hover:border-white/[0.16]"
+                      className="group flex items-center gap-2 rounded-2xl border border-border bg-bg/70 p-2 pr-3 shadow-card backdrop-blur-xl transition hover:border-text/20"
                     >
-                      <span className="relative h-10 w-10 overflow-hidden rounded-xl bg-white/[0.04]">
+                      <span className="relative h-10 w-10 overflow-hidden rounded-xl bg-card">
                         <Image src={p.images[0]} alt="" fill className="object-cover" />
                       </span>
                       <span className="min-w-0">
@@ -282,7 +282,7 @@ export default function NotFound() {
                 Top picks the AI loves
               </h2>
             </div>
-            <Link href="/shop" className="text-sm text-text-2 hover:text-white">
+            <Link href="/shop" className="text-sm text-text-2 hover:text-text">
               See all →
             </Link>
           </div>
@@ -291,9 +291,9 @@ export default function NotFound() {
               <Link
                 key={p.id}
                 href={`/product/${p.slug}`}
-                className="group overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl transition hover:-translate-y-1 hover:border-white/[0.14] hover:shadow-glow"
+                className="group overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-xl transition hover:-translate-y-1 hover:border-text/20 hover:shadow-glow"
               >
-                <div className="relative aspect-[4/5] overflow-hidden bg-white/[0.04]">
+                <div className="relative aspect-[4/5] overflow-hidden bg-card">
                   <Image
                     src={p.images[0]}
                     alt={p.name}
@@ -329,7 +329,7 @@ function Shortcut({
   return (
     <Link
       href={href}
-      className="group flex items-center gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-3 backdrop-blur-xl transition hover:border-white/[0.14] hover:bg-white/[0.04]"
+      className="group flex items-center gap-3 rounded-2xl border border-border bg-card p-3 backdrop-blur-xl transition hover:border-text/20 hover:bg-card"
     >
       <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-brand text-white shadow-glow">
         <Icon size={14} />
@@ -340,7 +340,7 @@ function Shortcut({
       </span>
       <ArrowRight
         size={13}
-        className="ml-auto text-text-2 transition group-hover:translate-x-0.5 group-hover:text-white"
+        className="ml-auto text-text-2 transition group-hover:translate-x-0.5 group-hover:text-text"
       />
     </Link>
   );

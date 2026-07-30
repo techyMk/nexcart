@@ -81,7 +81,7 @@ export default function SecurityPage() {
                 Found a vulnerability? Please report it to{" "}
                 <a
                   href="mailto:techymk.dev@gmail.com"
-                  className="font-medium text-white hover:text-primary-300"
+                  className="font-medium text-text hover:text-primary-300"
                 >
                   techymk.dev@gmail.com
                 </a>

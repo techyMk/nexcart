@@ -65,7 +65,7 @@ export function AuthGateModal() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 16, scale: 0.96 }}
               transition={{ type: "spring", stiffness: 360, damping: 30 }}
-              className="pointer-events-auto relative w-full max-w-md overflow-hidden rounded-3xl border border-white/[0.08] bg-surface/95 shadow-card backdrop-blur-2xl"
+              className="pointer-events-auto relative w-full max-w-md overflow-hidden rounded-3xl border border-border bg-surface/95 shadow-card backdrop-blur-2xl"
               role="dialog"
               aria-modal="true"
               aria-labelledby="auth-gate-title"
@@ -77,7 +77,7 @@ export function AuthGateModal() {
               <button
                 onClick={closeGate}
                 aria-label="Close"
-                className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full text-text-2 hover:bg-white/[0.05] hover:text-white"
+                className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full text-text-2 hover:bg-card-2 hover:text-text"
               >
                 <X size={16} />
               </button>
@@ -113,7 +113,7 @@ export function AuthGateModal() {
 
               <button
                 onClick={closeGate}
-                className="relative mt-4 text-xs text-text-2 hover:text-white"
+                className="relative mt-4 text-xs text-text-2 hover:text-text"
               >
                 Continue browsing
               </button>

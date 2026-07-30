@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
@@ -7,13 +8,22 @@ import { useCart } from "@/store/cart";
 import { formatPrice } from "@/lib/utils";
 import { products } from "@/lib/data";
 import { ProductCard } from "@/components/product-card";
+import { FREE_SHIPPING_THRESHOLD, STANDARD_SHIPPING } from "@/lib/constants";
 
 export default function CartPage() {
   const { lines, setQty, remove } = useCart();
+  const [hydrated, setHydrated] = useState(false);
+  const [code, setCode] = useState("");
+  const [promo, setPromo] = useState<"idle" | "applied" | "invalid">("idle");
+  useEffect(() => setHydrated(true), []);
   const subtotal = lines.reduce((a, l) => a + l.price * l.quantity, 0);
-  const shipping = subtotal >= 500 || subtotal === 0 ? 0 : 14;
+  const shipping =
+    subtotal >= FREE_SHIPPING_THRESHOLD || subtotal === 0
+      ? 0
+      : STANDARD_SHIPPING;
   const tax = subtotal * 0.07;
-  const total = subtotal + shipping + tax;
+  const discount = promo === "applied" ? subtotal * 0.1 : 0;
+  const total = subtotal + shipping + tax - discount;
   const recs = products.filter((p) => p.badge === "AI PICK").slice(0, 4);
 
   return (
@@ -26,9 +36,18 @@ export default function CartPage() {
           </h1>
         </div>
 
-        {lines.length === 0 ? (
-          <div className="grid place-items-center rounded-3xl border border-white/[0.06] bg-white/[0.02] p-20 text-center backdrop-blur-xl">
-            <div className="grid h-16 w-16 place-items-center rounded-full bg-gradient-brand text-white shadow-glow">
+        {!hydrated ? (
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-28 animate-pulse rounded-2xl bg-card"
+              />
+            ))}
+          </div>
+        ) : lines.length === 0 ? (
+          <div className="grid place-items-center rounded-3xl border border-border bg-card p-20 text-center backdrop-blur-xl">
+            <div className="grid h-16 w-16 place-items-center rounded-full bg-gradient-brand text-white dark:shadow-glow">
               <ShoppingBag size={20} />
             </div>
             <h2 className="mt-5 font-display text-xl">Your cart is empty</h2>
@@ -41,11 +60,11 @@ export default function CartPage() {
           </div>
         ) : (
           <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
-            <div className="overflow-hidden rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
-              <ul className="divide-y divide-white/[0.06]">
+            <div className="overflow-hidden rounded-3xl border border-border bg-card backdrop-blur-xl">
+              <ul className="divide-y divide-border">
                 {lines.map((l) => (
                   <li key={l.id} className="flex gap-4 p-5">
-                    <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-2xl bg-white/[0.04]">
+                    <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-2xl bg-card">
                       <Image src={l.image} alt={l.name} fill className="object-cover" />
                     </div>
                     <div className="flex flex-1 flex-col justify-between">
@@ -65,17 +84,17 @@ export default function CartPage() {
                         </button>
                       </div>
                       <div className="flex items-end justify-between">
-                        <div className="inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.02]">
+                        <div className="inline-flex items-center rounded-full border border-border bg-card">
                           <button
                             onClick={() => setQty(l.id, l.quantity - 1)}
-                            className="grid h-9 w-9 place-items-center text-text-2 hover:text-white"
+                            className="grid h-9 w-9 place-items-center text-text-2 hover:text-text"
                           >
                             <Minus size={13} />
                           </button>
                           <span className="w-8 text-center text-sm">{l.quantity}</span>
                           <button
                             onClick={() => setQty(l.id, l.quantity + 1)}
-                            className="grid h-9 w-9 place-items-center text-text-2 hover:text-white"
+                            className="grid h-9 w-9 place-items-center text-text-2 hover:text-text"
                           >
                             <Plus size={13} />
                           </button>
@@ -95,7 +114,7 @@ export default function CartPage() {
               </ul>
             </div>
 
-            <aside className="self-start rounded-3xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl">
+            <aside className="self-start rounded-3xl border border-border bg-card p-6 backdrop-blur-xl">
               <div className="text-xs uppercase tracking-widest text-text-2">
                 Order summary
               </div>
@@ -106,26 +125,52 @@ export default function CartPage() {
                   value={shipping === 0 ? "Free" : formatPrice(shipping)}
                 />
                 <Row label="Estimated tax" value={formatPrice(tax)} />
+                {promo === "applied" && (
+                  <div className="text-success">
+                    ✓ WELCOME10 applied — you saved {formatPrice(discount)}
+                  </div>
+                )}
               </div>
-              <div className="my-4 h-px bg-white/[0.06]" />
+              <div className="my-4 h-px bg-card-2" />
               <Row label="Total" value={formatPrice(total)} bold />
 
-              <form className="mt-5 flex overflow-hidden rounded-full border border-white/[0.08] bg-white/[0.02] p-1">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setPromo(
+                    code.trim().toUpperCase() === "WELCOME10"
+                      ? "applied"
+                      : "invalid",
+                  );
+                }}
+                className="mt-5 flex overflow-hidden rounded-full border border-border bg-card p-1 transition focus-within:border-primary-400/50 focus-within:ring-2 focus-within:ring-primary-400/20"
+              >
                 <input
+                  value={code}
+                  onChange={(e) => {
+                    setCode(e.target.value);
+                    if (promo === "invalid") setPromo("idle");
+                  }}
                   placeholder="Promo code"
+                  aria-label="Promo code"
                   className="flex-1 bg-transparent px-3 text-sm outline-none placeholder:text-text-2"
                 />
-                <button className="rounded-full bg-white/[0.07] px-4 text-sm font-medium hover:bg-white/[0.12]">
+                <button className="rounded-full bg-card-2 px-4 text-sm font-medium hover:bg-text/10">
                   Apply
                 </button>
               </form>
+              {promo === "invalid" && (
+                <p className="mt-2 px-2 text-xs text-rose-300">
+                  That code isn&rsquo;t valid
+                </p>
+              )}
 
               <Link href="/checkout" className="btn btn-primary mt-5 w-full">
                 Checkout securely <ArrowRight size={16} />
               </Link>
               <Link
                 href="/shop"
-                className="mt-2 block text-center text-sm text-text-2 hover:text-white"
+                className="mt-2 block text-center text-sm text-text-2 hover:text-text"
               >
                 Continue shopping
               </Link>
@@ -133,7 +178,7 @@ export default function CartPage() {
           </div>
         )}
 
-        {lines.length > 0 && (
+        {hydrated && lines.length > 0 && (
           <section className="section">
             <div className="mb-8">
               <div className="section-eyebrow">AI upsell</div>
@@ -164,7 +209,7 @@ function Row({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <span className={bold ? "text-white" : "text-text-2"}>{label}</span>
+      <span className={bold ? "text-text" : "text-text-2"}>{label}</span>
       <span className={bold ? "font-display text-lg font-semibold" : ""}>
         {value}
       </span>

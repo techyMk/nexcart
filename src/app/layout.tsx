@@ -11,6 +11,8 @@ import { CommandPalette } from "@/components/command-palette";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { AuthProvider } from "@/components/auth-provider";
 import { AuthGateModal } from "@/components/auth-gate-modal";
+import { MotionProvider } from "@/components/motion-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -46,7 +48,13 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#050816",
+  viewportFit: "cover",
 };
+
+// Runs before paint: applies the persisted theme class so there is no flash
+// of the wrong theme. Any error (blocked storage, bad value) falls back to
+// dark, which matches the SSR'd class.
+const themeInitScript = `(function(){try{if(localStorage.getItem('nexcart-theme')==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){document.documentElement.classList.add('dark')}})();`;
 
 export default function RootLayout({
   children,
@@ -54,20 +62,31 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${space.variable}`}>
-      <body className="relative overflow-x-hidden bg-bg pb-14 text-text md:pb-0">
-        <AuthProvider>
-          <AnimatedBg />
-          <Navbar />
-          <ScrollProgress />
-          <main className="relative z-10">{children}</main>
-          <Footer />
-          <CartDrawer />
-          <CommandPalette />
-          <AuthGateModal />
-          <AIAssistantFab />
-          <MobileTabBar />
-        </AuthProvider>
+    <html
+      lang="en"
+      className={`${inter.variable} ${space.variable} dark`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body className="relative overflow-x-hidden bg-bg pb-[calc(3.5rem+env(safe-area-inset-bottom))] text-text md:pb-0">
+        <ThemeProvider>
+          <AuthProvider>
+            <MotionProvider>
+              <AnimatedBg />
+              <Navbar />
+              <ScrollProgress />
+              <main className="relative z-10 pb-24 md:pb-32">{children}</main>
+              <Footer />
+              <CartDrawer />
+              <CommandPalette />
+              <AuthGateModal />
+              <AIAssistantFab />
+              <MobileTabBar />
+            </MotionProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

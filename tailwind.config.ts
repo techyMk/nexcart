@@ -13,12 +13,17 @@ const config: Config = {
     },
     extend: {
       colors: {
-        bg: "#050816",
-        surface: "#0B1120",
-        "surface-2": "#111827",
-        border: "rgba(255,255,255,0.08)",
-        text: "#F8FAFC",
-        "text-2": "#94A3B8",
+        // Theme tokens — RGB-channel vars keep opacity modifiers working
+        // (bg-bg/85, text-text-2/70, ...). card/card-2/border are full-value
+        // vars: never use opacity modifiers on them.
+        bg: "rgb(var(--bg-rgb) / <alpha-value>)",
+        surface: "rgb(var(--surface-rgb) / <alpha-value>)",
+        "surface-2": "rgb(var(--surface-2-rgb) / <alpha-value>)",
+        border: "var(--border)",
+        card: "var(--card)",
+        "card-2": "var(--card-2)",
+        text: "rgb(var(--text-rgb) / <alpha-value>)",
+        "text-2": "rgb(var(--text-2-rgb) / <alpha-value>)",
         primary: {
           DEFAULT: "#5B8CFF",
           50: "#EEF3FF",
@@ -52,6 +57,8 @@ const config: Config = {
       backgroundImage: {
         "gradient-brand":
           "linear-gradient(135deg,#3B82F6 0%,#5B8CFF 35%,#7C3AED 100%)",
+        "gradient-brand-deep":
+          "linear-gradient(135deg,#2563EB 0%,#4F46E5 50%,#6D28D9 100%)",
         "gradient-electric": "linear-gradient(135deg,#5B8CFF 0%,#7C3AED 100%)",
         "gradient-glow": "linear-gradient(135deg,#00D4FF 0%,#3B82F6 100%)",
         "gradient-dark": "linear-gradient(180deg,#050816 0%,#0F172A 100%)",
@@ -85,6 +92,14 @@ const config: Config = {
           "0%,100%": { opacity: "0.6" },
           "50%": { opacity: "1" },
         },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        drift: {
+          "0%,100%": { transform: "translate(0,0)" },
+          "50%": { transform: "translate(40px,-30px)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.6s ease-out forwards",
@@ -92,6 +107,8 @@ const config: Config = {
         shimmer: "shimmer 2.5s linear infinite",
         "gradient-x": "gradient-x 8s ease infinite",
         "pulse-slow": "pulse-slow 4s ease-in-out infinite",
+        marquee: "marquee 32s linear infinite",
+        drift: "drift 32s ease-in-out infinite",
       },
     },
   },

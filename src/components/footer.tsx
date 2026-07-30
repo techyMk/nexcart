@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import { BrandLogo } from "@/components/brand-logo";
 import { usePathname } from "next/navigation";
-import { Twitter, Github, Instagram, Linkedin } from "lucide-react";
 import { NewsletterForm } from "@/components/newsletter-form";
+import { brandMaskStyle } from "@/lib/utils";
 
 const cols = [
   {
@@ -21,29 +21,31 @@ const cols = [
     title: "Company",
     links: [
       ["About", "/about"],
-      ["Careers", "/about"],
-      ["Press", "/about"],
-      ["Brand kit", "/about"],
-      ["Contact", "/about"],
+      ["Order tracking", "/account"],
     ],
   },
   {
-    title: "Resources",
+    title: "Legal",
     links: [
-      ["Help center", "/about"],
-      ["Order tracking", "/account"],
-      ["Returns & warranty", "/about"],
-      ["NexCart Intelligence", "/about"],
-      ["Status", "/about"],
+      ["Terms", "/terms"],
+      ["Privacy", "/privacy"],
+      ["Security", "/security"],
     ],
   },
+];
+
+const socials = [
+  { slug: "x", label: "X", href: "https://x.com/TechyMk" },
+  { slug: "instagram", label: "Instagram", href: "https://www.instagram.com/techymk.dev/" },
+  { slug: "github", label: "GitHub", href: "https://github.com/techyMk" },
+  { slug: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/in/techymk" },
 ];
 
 export function Footer() {
   const pathname = usePathname();
   if (pathname?.startsWith("/admin")) return null;
   return (
-    <footer className="relative z-10 mt-24 border-t border-white/[0.06] bg-bg/60 backdrop-blur-xl">
+    <footer className="relative z-10 mt-24 border-t border-border bg-bg/60 backdrop-blur-xl">
       <div className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-primary-500/40 to-transparent" />
       <div className="container py-16">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
@@ -53,28 +55,31 @@ export function Footer() {
               aria-label="NexCart home"
               className="inline-flex items-center"
             >
-              <Image
-                src="/brand/nexcart-logo.webp"
-                alt="NexCart"
-                width={1200}
-                height={600}
-                className="h-20 w-auto"
-              />
+              <BrandLogo className="h-20 w-auto" />
             </Link>
             <p className="mt-4 max-w-sm text-sm text-text-2">
               Intelligent commerce, engineered for the next decade. AI-curated
               products, lightning checkout, premium service worldwide.
             </p>
-            <NewsletterForm variant="footer" source="footer" />
+            {/* Home already has the big Newsletter section — avoid two forms on one page. */}
+            {pathname !== "/" && (
+              <NewsletterForm variant="footer" source="footer" />
+            )}
             <div className="mt-6 flex items-center gap-2 text-text-2">
-              {[Twitter, Instagram, Github, Linkedin].map((I, i) => (
+              {socials.map(({ slug, label, href }) => (
                 <a
-                  key={i}
-                  href="#"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/[0.06] bg-white/[0.03] transition hover:bg-white/[0.07] hover:text-white"
-                  aria-label="Social link"
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card transition hover:bg-card-2 hover:text-text"
+                  aria-label={label}
                 >
-                  <I size={15} />
+                  <span
+                    aria-hidden
+                    className="h-[15px] w-[15px] bg-current"
+                    style={brandMaskStyle(slug, "contain")}
+                  />
                 </a>
               ))}
             </div>
@@ -89,7 +94,7 @@ export function Footer() {
                   <li key={label}>
                     <Link
                       href={href}
-                      className="text-text-2 transition hover:text-white"
+                      className="text-text-2 transition hover:text-text"
                     >
                       {label}
                     </Link>
@@ -99,7 +104,7 @@ export function Footer() {
             </div>
           ))}
         </div>
-        <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-white/[0.06] pt-6 text-xs text-text-2 md:flex-row md:items-center">
+        <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-border pt-6 text-xs text-text-2 md:flex-row md:items-center">
           <div className="flex flex-col gap-1">
             <div>© {new Date().getFullYear()} NexCart Inc. All rights reserved.</div>
             <div>
@@ -108,23 +113,23 @@ export function Footer() {
                 href="https://techymk.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-white transition hover:text-primary-300"
+                className="font-medium text-text transition hover:text-primary-300"
               >
                 techyMk
               </a>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            <Link href="/privacy" className="transition hover:text-white">
+            <Link href="/privacy" className="transition hover:text-text">
               Privacy
             </Link>
-            <Link href="/terms" className="transition hover:text-white">
+            <Link href="/terms" className="transition hover:text-text">
               Terms
             </Link>
-            <Link href="/security" className="transition hover:text-white">
+            <Link href="/security" className="transition hover:text-text">
               Security
             </Link>
-            <span className="rounded-full bg-white/[0.04] px-2.5 py-1 text-[10px] uppercase tracking-widest text-text-2">
+            <span className="chip chip-neutral text-[10px] uppercase tracking-widest">
               Powered by NexCart Intelligence™
             </span>
           </div>

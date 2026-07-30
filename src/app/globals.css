@@ -2,17 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+/* === Theme tokens ===
+   :root = light, .dark = dark. Core tokens ship BOTH a full value (--X) and
+   an RGB channel triple (--X-rgb) so Tailwind opacity modifiers keep working
+   (text-text-2/70, bg-bg/85, ...). border/card/card-2 are full-value only —
+   never use opacity modifiers on them. primary/accent are theme-invariant. */
 :root {
-  color-scheme: dark;
-  --bg: #050816;
-  --surface: #0b1120;
-  --surface-2: #111827;
-  --text: #f8fafc;
-  --text-2: #94a3b8;
-  --border: rgba(255, 255, 255, 0.08);
+  color-scheme: light;
+  --bg: #f5f6fa;
+  --bg-rgb: 245 246 250;
+  --surface: #ffffff;
+  --surface-rgb: 255 255 255;
+  --surface-2: #e9edf5;
+  --surface-2-rgb: 233 237 245;
+  --text: #0b1120;
+  --text-rgb: 11 17 32;
+  --text-2: #55627a;
+  --text-2-rgb: 85 98 122;
+  --border: rgba(11, 17, 32, 0.1);
+  --card: rgba(11, 17, 32, 0.04);
+  --card-2: rgba(11, 17, 32, 0.07);
   --primary: #5b8cff;
   --accent: #3b82f6;
   --accent-2: #7c3aed;
+}
+
+.dark {
+  color-scheme: dark;
+  --bg: #050816;
+  --bg-rgb: 5 8 22;
+  --surface: #0b1120;
+  --surface-rgb: 11 17 32;
+  --surface-2: #111827;
+  --surface-2-rgb: 17 24 39;
+  --text: #f8fafc;
+  --text-rgb: 248 250 252;
+  --text-2: #94a3b8;
+  --text-2-rgb: 148 163 184;
+  --border: rgba(255, 255, 255, 0.08);
+  --card: rgba(255, 255, 255, 0.03);
+  --card-2: rgba(255, 255, 255, 0.06);
 }
 
 * {
@@ -22,13 +51,21 @@
 
 html,
 body {
-  background: #050816;
+  background: var(--bg);
   color: var(--text);
   font-family: var(--font-inter), Inter, system-ui, sans-serif;
   min-height: 100%;
 }
 
+/* Ambient brand radials — full strength on dark, a whisper on light. */
 body {
+  background:
+    radial-gradient(1200px 700px at 80% -10%, rgba(124, 58, 237, 0.06), transparent 60%),
+    radial-gradient(1100px 700px at -10% 10%, rgba(59, 130, 246, 0.06), transparent 60%),
+    #f5f6fa;
+}
+
+.dark body {
   background:
     radial-gradient(1200px 700px at 80% -10%, rgba(124, 58, 237, 0.18), transparent 60%),
     radial-gradient(1100px 700px at -10% 10%, rgba(59, 130, 246, 0.18), transparent 60%),
@@ -38,13 +75,13 @@ body {
 /* Selection */
 ::selection {
   background: rgba(91, 140, 255, 0.35);
-  color: #fff;
+  color: var(--text);
 }
 
 /* Chrome/Edge/Safari force a yellow-ish autofill background that wrecks our
-   dark inputs. Mask it with a transparent inset shadow + override the text
+   inputs. Mask it with a transparent inset shadow + override the text
    colour. The huge transition delay keeps the override sticky as autofill
-   re-applies on focus. */
+   re-applies on focus. var(--text) keeps it correct in both themes. */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -64,17 +101,22 @@ select:-webkit-autofill:focus {
     color 600000s 0s ease-in-out;
 }
 
-/* Page-level scrollbar — hidden. <ScrollProgress /> shows position instead. */
-html,
-body {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+/* Page-level scrollbar — themed thin track. <ScrollProgress /> stays as a decorative addition. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--text-rgb) / 0.18) transparent;
+  scrollbar-gutter: stable;
 }
-html::-webkit-scrollbar,
-body::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-  display: none;
+html::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+html::-webkit-scrollbar-thumb {
+  background: rgb(var(--text-rgb) / 0.15);
+  border-radius: 999px;
 }
 
 /* Subtle scrollbar for any inner scrollable panels (cart drawer, modals, sidebars) */
@@ -86,37 +128,50 @@ body::-webkit-scrollbar {
   background: transparent;
 }
 *::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(var(--text-rgb) / 0.1);
   border-radius: 999px;
 }
 *::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgb(var(--text-rgb) / 0.18);
+}
+
+@layer base {
+  :focus-visible {
+    outline: 2px solid #5b8cff;
+    outline-offset: 2px;
+  }
 }
 
 @layer components {
   .glass {
     background: linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.04) 0%,
-      rgba(255, 255, 255, 0.02) 100%
+      rgb(var(--text-rgb) / 0.04) 0%,
+      rgb(var(--text-rgb) / 0.02) 100%
     );
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border);
   }
 
   .glass-strong {
-    background: rgba(11, 17, 32, 0.7);
+    background: rgb(var(--surface-rgb) / 0.7);
     backdrop-filter: blur(24px) saturate(140%);
     -webkit-backdrop-filter: blur(24px) saturate(140%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border);
   }
 
+  /* Light: dark ink → brand blue → purple (white-to-lavender is invisible
+     on light). Dark override swaps only background-image so the base rule's
+     background-clip:text keeps applying (a shorthand would reset it). */
   .text-gradient {
-    background: linear-gradient(135deg, #fff 0%, #c7d3ff 50%, #b388ff 100%);
+    background: linear-gradient(135deg, #0b1120 0%, #3b82f6 50%, #7c3aed 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+  .dark .text-gradient {
+    background-image: linear-gradient(135deg, #fff 0%, #c7d3ff 50%, #b388ff 100%);
   }
 
   .text-gradient-brand {
@@ -127,12 +182,22 @@ body::-webkit-scrollbar {
   }
 
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-bg;
+  }
+  .btn svg {
+    transition: transform 0.25s ease;
+  }
+  .btn:hover svg {
+    transform: translateX(3px);
+  }
+
+  .btn-sm {
+    @apply px-4 py-2 text-sm;
   }
 
   .btn-primary {
     @apply text-white shadow-glow;
-    background: linear-gradient(135deg, #3b82f6 0%, #5b8cff 50%, #7c3aed 100%);
+    background: linear-gradient(135deg, #2563EB 0%, #4F46E5 50%, #6D28D9 100%);
     background-size: 200% 200%;
     transition: background-position 0.6s ease, transform 0.2s ease, box-shadow 0.3s ease;
   }
@@ -144,27 +209,52 @@ body::-webkit-scrollbar {
 
   .btn-ghost {
     @apply text-text;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--card);
+    border: 1px solid var(--border);
   }
   .btn-ghost:hover {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(255, 255, 255, 0.14);
+    background: var(--card-2);
+    border-color: rgb(var(--text-rgb) / 0.14);
   }
 
   .chip {
     @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium;
     background: rgba(91, 140, 255, 0.12);
-    color: #c7d3ff;
+    color: #2563eb;
     border: 1px solid rgba(91, 140, 255, 0.25);
   }
+  .dark .chip {
+    color: #c7d3ff;
+  }
 
+  /* Modifiers composed with .chip */
+  .chip-success {
+    background: rgba(34, 197, 94, 0.15);
+    color: #15803d;
+    border-color: rgba(34, 197, 94, 0.3);
+  }
+  .dark .chip-success {
+    color: #4ade80;
+  }
+  .chip-neutral {
+    background: var(--card);
+    color: var(--text-2);
+    border-color: var(--border);
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm outline-none placeholder:text-text-2 transition focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/20;
+  }
+
+  /* No backdrop-blur here: backdrop-filter on grid-item roots is a major perf
+     cost and is visually indistinguishable over the near-opaque bg.
+     Keep .glass-strong for floating layers (modals/drawer/palette). */
   .card {
-    @apply rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl;
+    @apply rounded-3xl border border-border bg-card;
   }
 
   .hairline {
-    border-color: rgba(255, 255, 255, 0.06);
+    border-color: var(--border);
   }
 
   .section {
@@ -178,13 +268,17 @@ body::-webkit-scrollbar {
   .section-eyebrow {
     @apply text-xs uppercase tracking-[0.2em] text-primary-400;
   }
+
+  .page-title {
+    @apply font-display text-4xl font-semibold tracking-tight md:text-5xl lg:text-6xl;
+  }
 }
 
 @layer utilities {
   .grid-bg {
     background-image:
-      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      linear-gradient(rgb(var(--text-rgb) / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--text-rgb) / 0.04) 1px, transparent 1px);
     background-size: 64px 64px;
     mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 1) 0%, transparent 70%);
   }
@@ -209,5 +303,18 @@ body::-webkit-scrollbar {
   }
   .no-scrollbar {
     scrollbar-width: none;
+  }
+}
+
+/* Reduced-motion safety net — collapses all CSS keyframe utilities
+   (animate-pulse, animate-marquee, animate-gradient-x, ...) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

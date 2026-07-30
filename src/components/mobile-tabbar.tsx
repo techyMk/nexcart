@@ -62,7 +62,7 @@ export function MobileTabBar() {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.06] bg-bg/85 backdrop-blur-xl md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-bg/85 backdrop-blur-xl md:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <ul className="grid grid-cols-5">
@@ -83,7 +83,7 @@ export function MobileTabBar() {
             type="button"
             onClick={openPalette}
             aria-label="Search"
-            className="flex h-14 w-full flex-col items-center justify-center gap-0.5 text-[10px] text-text-2 transition hover:text-white"
+            className="flex h-14 w-full flex-col items-center justify-center gap-0.5 text-[10px] text-text-2 transition hover:text-text"
           >
             <Search size={18} />
             <span>Search</span>
@@ -117,7 +117,7 @@ function TabItem({
         href={href}
         className={cn(
           "flex h-14 flex-col items-center justify-center gap-0.5 text-[10px] transition",
-          active ? "text-white" : "text-text-2 hover:text-white",
+          active ? "text-text" : "text-text-2 hover:text-text",
         )}
       >
         <span
@@ -144,7 +144,7 @@ function CartTab({ count, active }: { count: number; active: boolean }) {
         aria-label={`Cart${count > 0 ? ` (${count})` : ""}`}
         className={cn(
           "relative flex h-14 w-full flex-col items-center justify-center gap-0.5 text-[10px] transition",
-          active ? "text-white" : "text-text-2 hover:text-white",
+          active ? "text-text" : "text-text-2 hover:text-text",
         )}
       >
         <span className="relative">
@@ -176,12 +176,12 @@ function AccountTab({
         href="/account"
         className={cn(
           "flex h-14 flex-col items-center justify-center gap-0.5 text-[10px] transition",
-          active ? "text-white" : "text-text-2 hover:text-white",
+          active ? "text-text" : "text-text-2 hover:text-text",
         )}
       >
         {signedIn ? (
           <span className="relative inline-block h-[18px] w-[18px]">
-            <span className="grid h-full w-full place-items-center overflow-hidden rounded-full bg-gradient-brand ring-1 ring-white/15">
+            <span className="grid h-full w-full place-items-center overflow-hidden rounded-full bg-gradient-brand ring-1 ring-border">
               {avatarUrl ? (
                 <Image
                   src={avatarUrl}

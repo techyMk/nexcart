@@ -23,7 +23,7 @@ export default function AdminProducts() {
         </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-3 backdrop-blur-xl">
+      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-card p-3 backdrop-blur-xl">
         <div className="relative flex-1 min-w-[220px]">
           <Search
             size={15}
@@ -31,23 +31,23 @@ export default function AdminProducts() {
           />
           <input
             placeholder="Search products…"
-            className="h-10 w-full rounded-full border border-white/[0.06] bg-white/[0.03] pl-9 pr-4 text-sm outline-none placeholder:text-text-2 focus:border-white/[0.14]"
+            className="h-10 w-full rounded-full border border-border bg-card pl-9 pr-4 text-sm outline-none placeholder:text-text-2 focus:border-primary-400/60"
           />
         </div>
-        <button className="inline-flex h-10 items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-4 text-sm">
+        <button className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm">
           <Filter size={14} /> All categories
         </button>
-        <button className="inline-flex h-10 items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-4 text-sm">
+        <button className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm">
           Featured only
         </button>
-        <button className="inline-flex h-10 items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-4 text-sm">
+        <button className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm">
           Out of stock
         </button>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
+      <div className="overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-xl">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-white/[0.06] bg-white/[0.02] text-xs uppercase tracking-widest text-text-2">
+          <thead className="border-b border-border bg-card text-xs uppercase tracking-widest text-text-2">
             <tr>
               <th className="px-5 py-3 font-medium">Product</th>
               <th className="px-5 py-3 font-medium">Category</th>
@@ -58,12 +58,12 @@ export default function AdminProducts() {
               <th className="px-5 py-3 font-medium" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/[0.06]">
+          <tbody className="divide-y divide-border">
             {products.map((p) => (
-              <tr key={p.id} className="transition hover:bg-white/[0.02]">
+              <tr key={p.id} className="transition hover:bg-card">
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-3">
-                    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-white/[0.04]">
+                    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-card">
                       <Image src={p.images[0]} alt="" fill className="object-cover" />
                     </div>
                     <div className="min-w-0">
@@ -101,10 +101,10 @@ export default function AdminProducts() {
                 </td>
                 <td className="px-5 py-3">
                   <div className="flex justify-end gap-2">
-                    <button className="grid h-8 w-8 place-items-center rounded-lg text-text-2 hover:bg-white/[0.05] hover:text-white">
+                    <button className="grid h-8 w-8 place-items-center rounded-lg text-text-2 hover:bg-card-2 hover:text-text">
                       <Pencil size={14} />
                     </button>
-                    <button className="grid h-8 w-8 place-items-center rounded-lg text-text-2 hover:bg-white/[0.05] hover:text-rose-400">
+                    <button className="grid h-8 w-8 place-items-center rounded-lg text-text-2 hover:bg-card-2 hover:text-rose-400">
                       <Trash2 size={14} />
                     </button>
                   </div>

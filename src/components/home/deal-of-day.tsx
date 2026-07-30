@@ -2,8 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { Flame, ArrowRight } from "lucide-react";
 import { products } from "@/lib/data";
 import { formatPrice } from "@/lib/utils";
@@ -24,27 +29,82 @@ function useCountdown(seconds: number) {
   return { h, m, s };
 }
 
+function Countdown({ initial }: { initial: number }) {
+  const { h, m, s } = useCountdown(initial);
+  return (
+    <div className="mt-6 flex gap-3">
+      {[
+        { l: "Hrs", v: pad(h) },
+        { l: "Min", v: pad(m) },
+        { l: "Sec", v: pad(s) },
+      ].map((x) => (
+        <div
+          key={x.l}
+          className={`grid h-16 w-16 place-items-center overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-xl ${
+            x.l === "Sec"
+              ? "ring-1 ring-primary-400/20 dark:shadow-[0_0_24px_-4px_rgba(91,140,255,0.45)]"
+              : ""
+          }`}
+        >
+          <span className="relative block h-8 overflow-hidden">
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.span
+                key={x.v}
+                initial={{ y: 12, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -12, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="block font-display text-2xl font-semibold tabular-nums"
+              >
+                {x.v}
+              </motion.span>
+            </AnimatePresence>
+          </span>
+          <span className="text-[10px] uppercase tracking-widest text-text-2">
+            {x.l}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function DealOfDay() {
   const deal = products.find((p) => p.oldPrice) ?? products[0];
-  const { h, m, s } = useCountdown(8 * 3600 + 43 * 60 + 12);
   const discount =
     deal.oldPrice && Math.round(((deal.oldPrice - deal.price) / deal.oldPrice) * 100);
+
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const orbTopY = useTransform(scrollYProgress, [0, 1], [60, -60]);
+  const orbBottomY = useTransform(scrollYProgress, [0, 1], [-60, 60]);
+  const imageY = useTransform(scrollYProgress, [0, 1], [30, -30]);
 
   return (
     <section className="section">
       <div className="container">
-        <div className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-br from-primary-900/40 via-surface to-surface-2 p-8 md:p-12">
-          <div className="pointer-events-none absolute -right-20 top-0 h-72 w-72 rounded-full bg-accent-purple/40 blur-3xl" />
-          <div className="pointer-events-none absolute -left-20 bottom-0 h-72 w-72 rounded-full bg-primary-600/40 blur-3xl" />
+        <div
+          ref={ref}
+          className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary-900/40 via-surface to-surface-2 p-8 md:p-12"
+        >
+          <motion.div
+            style={{ y: orbTopY }}
+            className="pointer-events-none absolute -right-20 top-0 h-72 w-72 rounded-full bg-orange-500/20 blur-3xl opacity-50 dark:opacity-100"
+          />
+          <motion.div
+            style={{ y: orbBottomY }}
+            className="pointer-events-none absolute -left-20 bottom-0 h-72 w-72 rounded-full bg-primary-600/40 blur-3xl opacity-50 dark:opacity-100"
+          />
 
           <div className="relative grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
             <div>
-              <div className="chip">
+              <div className="chip bg-orange-500/15 text-orange-300 border-orange-400/30">
                 <Flame size={12} /> Deal of the Day
               </div>
-              <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight md:text-5xl">
-                {deal.name}
-              </h2>
+              <h2 className="section-title mt-4">{deal.name}</h2>
               <p className="mt-3 max-w-lg text-text-2">{deal.description}</p>
 
               <div className="mt-6 flex items-baseline gap-3">
@@ -63,23 +123,7 @@ export function DealOfDay() {
                 )}
               </div>
 
-              <div className="mt-6 flex gap-3">
-                {[
-                  { l: "Hrs", v: pad(h) },
-                  { l: "Min", v: pad(m) },
-                  { l: "Sec", v: pad(s) },
-                ].map((x) => (
-                  <div
-                    key={x.l}
-                    className="grid h-16 w-16 place-items-center rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl"
-                  >
-                    <span className="font-display text-xl font-semibold">{x.v}</span>
-                    <span className="text-[10px] uppercase tracking-widest text-text-2">
-                      {x.l}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <Countdown initial={8 * 3600 + 43 * 60 + 12} />
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Link href={`/product/${deal.slug}`} className="btn btn-primary">
@@ -96,10 +140,11 @@ export function DealOfDay() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
+              style={{ y: imageY }}
               className="relative mx-auto aspect-square w-full max-w-md"
             >
-              <div className="absolute inset-0 rounded-[36px] bg-gradient-electric opacity-20 blur-3xl" />
-              <div className="relative h-full overflow-hidden rounded-[28px] border border-white/[0.08] bg-bg/40">
+              <div className="absolute inset-0 rounded-[36px] bg-gradient-electric opacity-20 blur-3xl dark:opacity-20" />
+              <div className="relative h-full overflow-hidden rounded-[28px] border border-border bg-bg/40">
                 <Image
                   src={deal.images[0]}
                   alt={deal.name}

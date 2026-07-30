@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import { BrandLogo } from "@/components/brand-logo";
 import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
@@ -16,6 +16,8 @@ import {
   LogOut,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { Field } from "@/components/auth/field";
+import { GoogleIcon } from "@/components/auth/google-icon";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -155,7 +157,7 @@ function LoginInner() {
 
   if (checking) {
     return (
-      <div className="grid min-h-[60vh] place-items-center pt-24">
+      <div className="grid min-h-[60vh] place-items-center pt-36">
         <Loader2 size={20} className="animate-spin text-text-2" />
       </div>
     );
@@ -164,36 +166,29 @@ function LoginInner() {
   // Already signed in — show a friendly switcher
   if (meEmail) {
     return (
-      <div className="grid min-h-screen place-items-center pt-24">
+      <div className="grid min-h-screen place-items-center px-5 pb-16 pt-36">
         <div className="container max-w-md">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-bg/60 p-8 backdrop-blur-2xl"
+            className="relative overflow-hidden rounded-3xl border border-border bg-card p-8 backdrop-blur-xl"
           >
-            <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/20 blur-3xl" />
+            <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/20 opacity-50 blur-3xl dark:opacity-100" />
             <div className="relative">
               <Link href="/" aria-label="NexCart home" className="inline-flex">
-                <Image
-                  src="/brand/nexcart-logo.webp"
-                  alt="NexCart"
-                  width={1200}
-                  height={600}
-                  priority
-                  className="h-16 w-auto"
-                />
+                <BrandLogo priority className="h-16 w-auto" />
               </Link>
               <div className="mt-6 flex items-start gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm">
                 <CheckCircle2
                   size={18}
-                  className="mt-0.5 shrink-0 text-emerald-300"
+                  className="mt-0.5 shrink-0 text-emerald-600 dark:text-emerald-300"
                 />
                 <div>
-                  <div className="font-semibold text-emerald-100">
+                  <div className="font-semibold text-emerald-800 dark:text-emerald-100">
                     You&apos;re already signed in
                   </div>
-                  <div className="text-emerald-200/80">as {meEmail}</div>
+                  <div className="text-emerald-700/90 dark:text-emerald-200/80">as {meEmail}</div>
                 </div>
               </div>
               <h1 className="mt-6 font-display text-2xl font-semibold tracking-tight">
@@ -228,29 +223,22 @@ function LoginInner() {
 
   // Default: sign-in form
   return (
-    <div className="grid min-h-screen place-items-center pt-24">
+    <div className="grid min-h-screen place-items-center px-5 pb-16 pt-36">
       <div className="container max-w-md">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-bg/60 p-8 backdrop-blur-2xl"
+          className="relative overflow-hidden rounded-3xl border border-border bg-card p-8 backdrop-blur-xl"
         >
-          <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary-600/30 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-accent-purple/30 blur-3xl" />
+          <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary-600/30 opacity-50 blur-3xl dark:opacity-100" />
+          <div className="pointer-events-none absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-accent-purple/30 opacity-50 blur-3xl dark:opacity-100" />
           <div className="relative">
             <Link href="/" aria-label="NexCart home" className="inline-flex">
-              <Image
-                src="/brand/nexcart-logo.webp"
-                alt="NexCart"
-                width={1200}
-                height={600}
-                priority
-                className="h-16 w-auto"
-              />
+              <BrandLogo priority className="h-16 w-auto" />
             </Link>
-            <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight">
-              Welcome back.
+            <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight md:text-4xl">
+              Welcome <span className="text-gradient-brand">back</span>.
             </h1>
             <p className="mt-1 text-sm text-text-2">
               Sign in to continue your intelligent shopping journey.
@@ -259,7 +247,7 @@ function LoginInner() {
             {err && (
               <div
                 role="alert"
-                className="mt-6 flex items-start gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2.5 text-sm text-rose-200"
+                className="mt-6 flex items-start gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2.5 text-sm text-rose-700 dark:text-rose-200"
               >
                 <AlertTriangle size={14} className="mt-0.5 shrink-0" />
                 <span>{err}</span>
@@ -271,7 +259,7 @@ function LoginInner() {
                 type="button"
                 onClick={onGoogle}
                 disabled={loading === "google"}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-sm hover:bg-white/[0.06] disabled:cursor-not-allowed disabled:opacity-60"
+                className="btn btn-ghost w-full disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading === "google" ? (
                   <Loader2 size={14} className="animate-spin" />
@@ -283,8 +271,8 @@ function LoginInner() {
             </div>
 
             <div className="my-6 flex items-center gap-3 text-xs uppercase tracking-widest text-text-2">
-              <span className="h-px flex-1 bg-white/[0.06]" /> or with email
-              <span className="h-px flex-1 bg-white/[0.06]" />
+              <span className="h-px flex-1 bg-border" /> or with email
+              <span className="h-px flex-1 bg-border" />
             </div>
 
             <form onSubmit={onEmailSubmit} className="space-y-3" noValidate>
@@ -317,13 +305,13 @@ function LoginInner() {
                 <button
                   type="button"
                   onClick={() => setShowPwd((v) => !v)}
-                  className="absolute right-3 top-9 text-text-2 hover:text-white"
+                  className="absolute right-3 top-9 text-text-2 hover:text-text"
                   aria-label={showPwd ? "Hide password" : "Show password"}
                 >
                   {showPwd ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
-              <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center text-xs">
                 <label className="flex items-center gap-2 text-text-2">
                   <input
                     type="checkbox"
@@ -332,9 +320,6 @@ function LoginInner() {
                   />
                   Remember me
                 </label>
-                <a href="#" className="text-primary-300 hover:text-white">
-                  Forgot password?
-                </a>
               </div>
               <button
                 type="submit"
@@ -351,7 +336,7 @@ function LoginInner() {
             </form>
             <p className="mt-5 text-center text-sm text-text-2">
               Don&apos;t have an account?{" "}
-              <Link href="/register" className="text-primary-300 hover:text-white">
+              <Link href="/register" className="text-primary-300 hover:text-text">
                 Create one
               </Link>
             </p>
@@ -359,45 +344,5 @@ function LoginInner() {
         </motion.div>
       </div>
     </div>
-  );
-}
-
-function Field({
-  label,
-  error,
-  ...rest
-}: React.InputHTMLAttributes<HTMLInputElement> & {
-  label: string;
-  error?: string | null;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-1.5 block text-xs uppercase tracking-widest text-text-2">
-        {label}
-      </span>
-      <input
-        {...rest}
-        aria-invalid={!!error}
-        className={`w-full rounded-xl border ${
-          error ? "border-rose-500/50" : "border-white/[0.08]"
-        } bg-white/[0.03] px-3 py-2.5 text-sm outline-none focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/20`}
-      />
-      {error && (
-        <span className="mt-1 inline-flex items-center gap-1 text-xs text-rose-300">
-          <AlertTriangle size={11} /> {error}
-        </span>
-      )}
-    </label>
-  );
-}
-
-function GoogleIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden>
-      <path
-        fill="#fff"
-        d="M21.35 11.1H12v3.2h5.35c-.24 1.4-1.74 4.1-5.35 4.1-3.22 0-5.85-2.66-5.85-5.95s2.63-5.95 5.85-5.95c1.83 0 3.06.78 3.76 1.45l2.57-2.47C16.84 3.94 14.66 3 12 3 6.92 3 2.85 7.06 2.85 12s4.07 9 9.15 9c5.27 0 8.78-3.7 8.78-8.92 0-.6-.07-1.06-.16-1.48z"
-      />
-    </svg>
   );
 }

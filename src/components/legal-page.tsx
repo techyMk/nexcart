@@ -32,7 +32,7 @@ export function LegalPage({
           <div className="chip">
             <Icon size={12} /> {eyebrow}
           </div>
-          <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.1] tracking-tight md:text-5xl">
+          <h1 className="page-title mt-5">
             {title}
           </h1>
           <p className="mt-5 text-base text-text-2 md:text-lg">{intro}</p>
@@ -51,7 +51,7 @@ export function LegalPage({
                 <li key={s.id}>
                   <a
                     href={`#${s.id}`}
-                    className="inline-flex items-center gap-1 text-text-2 transition hover:text-white"
+                    className="inline-flex items-center gap-1 text-text-2 transition hover:text-text"
                   >
                     <ChevronRight size={12} className="opacity-60" />
                     {s.title}
@@ -68,20 +68,20 @@ export function LegalPage({
                   {s.title}
                 </h2>
                 <div className="mt-3 space-y-3 text-text-2">{s.body}</div>
-                <div className="my-10 h-px w-full bg-white/[0.06] last:hidden" />
+                <div className="my-10 h-px w-full bg-card-2 last:hidden" />
               </section>
             ))}
 
-            <div className="mt-12 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 text-sm text-text-2">
+            <div className="mt-12 rounded-2xl border border-border bg-card p-6 text-sm text-text-2">
               Questions, requests, or concerns? Reach our team at{" "}
               <a
                 href="mailto:techymk.dev@gmail.com"
-                className="font-medium text-white hover:text-primary-300"
+                className="font-medium text-text hover:text-primary-300"
               >
                 techymk.dev@gmail.com
               </a>
               {" "}or visit our{" "}
-              <Link href="/about" className="font-medium text-white hover:text-primary-300">
+              <Link href="/about" className="font-medium text-text hover:text-primary-300">
                 About page
               </Link>
               .

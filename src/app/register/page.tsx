@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import { BrandLogo } from "@/components/brand-logo";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -22,6 +22,8 @@ import {
   Zap,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { Field } from "@/components/auth/field";
+import { GoogleIcon } from "@/components/auth/google-icon";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -255,7 +257,7 @@ export default function RegisterPage() {
 
   if (checking) {
     return (
-      <div className="grid min-h-[60vh] place-items-center pt-24">
+      <div className="grid min-h-[60vh] place-items-center pt-36">
         <Loader2 size={20} className="animate-spin text-text-2" />
       </div>
     );
@@ -263,25 +265,18 @@ export default function RegisterPage() {
 
   if (meEmail) {
     return (
-      <div className="grid min-h-screen place-items-center pt-24">
+      <div className="grid min-h-screen place-items-center px-5 pb-16 pt-36">
         <div className="container max-w-md">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-bg/60 p-8 backdrop-blur-2xl"
+            className="relative overflow-hidden rounded-3xl border border-border bg-card p-8 backdrop-blur-xl"
           >
             <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-amber-500/20 blur-3xl" />
             <div className="relative">
               <Link href="/" aria-label="NexCart home" className="inline-flex">
-                <Image
-                  src="/brand/nexcart-logo.webp"
-                  alt="NexCart"
-                  width={1200}
-                  height={600}
-                  priority
-                  className="h-16 w-auto"
-                />
+                <BrandLogo priority className="h-16 w-auto" />
               </Link>
               <div className="mt-6 flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm">
                 <AlertTriangle
@@ -327,7 +322,7 @@ export default function RegisterPage() {
   // ── Default register flow ─────────────────────────────────────────────
 
   return (
-    <div className="grid min-h-screen place-items-center pt-24">
+    <div className="grid min-h-screen place-items-center px-5 pb-16 pt-36">
       <div className="container">
         <div className="grid items-stretch gap-8 lg:grid-cols-2">
           <SidePanel />
@@ -336,7 +331,7 @@ export default function RegisterPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-bg/60 p-8 backdrop-blur-2xl"
+            className="relative overflow-hidden rounded-3xl border border-border bg-card p-8 backdrop-blur-xl"
           >
             <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary-600/30 blur-3xl" />
             <div className="relative">
@@ -356,7 +351,7 @@ export default function RegisterPage() {
                       Already have one?{" "}
                       <Link
                         href="/login"
-                        className="text-primary-300 hover:text-white"
+                        className="text-primary-300 hover:text-text"
                       >
                         Sign in
                       </Link>
@@ -430,7 +425,7 @@ export default function RegisterPage() {
                         <button
                           type="button"
                           onClick={() => setShowPwd((v) => !v)}
-                          className="absolute right-3 top-9 text-text-2 hover:text-white"
+                          className="absolute right-3 top-9 text-text-2 hover:text-text"
                           aria-label={
                             showPwd ? "Hide password" : "Show password"
                           }
@@ -446,11 +441,11 @@ export default function RegisterPage() {
                           onChange={(e) => setAgreed(e.target.checked)}
                         />
                         I agree to the{" "}
-                        <Link href="#" className="text-primary-300">
+                        <Link href="/terms" className="text-primary-300">
                           Terms
                         </Link>{" "}
                         &amp;{" "}
-                        <Link href="#" className="text-primary-300">
+                        <Link href="/privacy" className="text-primary-300">
                           Privacy Policy
                         </Link>
                         .
@@ -472,15 +467,15 @@ export default function RegisterPage() {
                     </form>
 
                     <div className="my-6 flex items-center gap-3 text-xs uppercase tracking-widest text-text-2">
-                      <span className="h-px flex-1 bg-white/[0.06]" /> or sign up
+                      <span className="h-px flex-1 bg-card-2" /> or sign up
                       with
-                      <span className="h-px flex-1 bg-white/[0.06]" />
+                      <span className="h-px flex-1 bg-card-2" />
                     </div>
                     <button
                       type="button"
                       onClick={onGoogle}
                       disabled={loading === "google"}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-sm hover:bg-white/[0.06] disabled:cursor-not-allowed disabled:opacity-60"
+                      className="btn btn-ghost w-full disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {loading === "google" ? (
                         <Loader2 size={14} className="animate-spin" />
@@ -508,7 +503,7 @@ export default function RegisterPage() {
                         setErr(null);
                         setInfo(null);
                       }}
-                      className="mb-4 inline-flex items-center gap-1.5 text-xs text-text-2 hover:text-white"
+                      className="mb-4 inline-flex items-center gap-1.5 text-xs text-text-2 hover:text-text"
                     >
                       <ArrowLeft size={12} /> Back
                     </button>
@@ -522,7 +517,7 @@ export default function RegisterPage() {
                         </h1>
                         <p className="text-sm text-text-2">
                           Enter the code we sent to{" "}
-                          <span className="text-white">{email}</span>
+                          <span className="text-text">{email}</span>
                         </p>
                       </div>
                     </div>
@@ -558,7 +553,7 @@ export default function RegisterPage() {
                         }
                         placeholder={"0".repeat(MIN_OTP)}
                         aria-label="Verification code"
-                        className="w-full rounded-2xl border border-white/[0.08] bg-white/[0.03] py-4 text-center font-mono text-3xl font-semibold tracking-[0.3em] tabular-nums outline-none focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/20"
+                        className="w-full rounded-2xl border border-border bg-card py-4 text-center font-mono text-3xl font-semibold tracking-[0.3em] tabular-nums outline-none focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/20"
                       />
                       <button
                         type="submit"
@@ -576,7 +571,7 @@ export default function RegisterPage() {
                         type="button"
                         onClick={onResend}
                         disabled={loading === "resend"}
-                        className="w-full text-center text-xs text-text-2 hover:text-white disabled:opacity-60"
+                        className="w-full text-center text-xs text-text-2 hover:text-text disabled:opacity-60"
                       >
                         {loading === "resend"
                           ? "Sending…"
@@ -600,21 +595,14 @@ function SidePanel() {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="relative hidden overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-br from-primary-700/30 via-accent-purple/20 to-bg p-10 backdrop-blur-2xl lg:flex lg:flex-col lg:justify-between"
+      className="relative hidden overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary-700/30 via-accent-purple/20 to-bg p-10 backdrop-blur-2xl lg:flex lg:flex-col lg:justify-between"
     >
       <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
       <div className="pointer-events-none absolute -right-20 top-20 h-72 w-72 rounded-full bg-primary-500/30 blur-3xl" />
       <div className="pointer-events-none absolute -left-10 bottom-0 h-72 w-72 rounded-full bg-accent-purple/30 blur-3xl" />
       <div className="relative">
         <Link href="/" aria-label="NexCart home" className="inline-flex">
-          <Image
-            src="/brand/nexcart-logo.webp"
-            alt="NexCart"
-            width={1200}
-            height={600}
-            priority
-            className="h-16 w-auto"
-          />
+          <BrandLogo priority className="h-16 w-auto" />
         </Link>
         <h2 className="mt-10 font-display text-4xl font-semibold leading-tight tracking-tight">
           Join the future of{" "}
@@ -636,7 +624,7 @@ function SidePanel() {
         ).map(([I, t]) => (
           <li
             key={t}
-            className="flex items-center gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.04] px-4 py-3"
+            className="flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3"
           >
             <I size={16} className="text-primary-300" />
             <span className="text-sm">{t}</span>
@@ -644,45 +632,5 @@ function SidePanel() {
         ))}
       </ul>
     </motion.div>
-  );
-}
-
-function Field({
-  label,
-  error,
-  ...rest
-}: React.InputHTMLAttributes<HTMLInputElement> & {
-  label: string;
-  error?: string | null;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-1.5 block text-xs uppercase tracking-widest text-text-2">
-        {label}
-      </span>
-      <input
-        {...rest}
-        aria-invalid={!!error}
-        className={`w-full rounded-xl border ${
-          error ? "border-rose-500/50" : "border-white/[0.08]"
-        } bg-white/[0.03] px-3 py-2.5 text-sm outline-none focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/20`}
-      />
-      {error && (
-        <span className="mt-1 inline-flex items-center gap-1 text-xs text-rose-300">
-          <AlertTriangle size={11} /> {error}
-        </span>
-      )}
-    </label>
-  );
-}
-
-function GoogleIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden>
-      <path
-        fill="#fff"
-        d="M21.35 11.1H12v3.2h5.35c-.24 1.4-1.74 4.1-5.35 4.1-3.22 0-5.85-2.66-5.85-5.95s2.63-5.95 5.85-5.95c1.83 0 3.06.78 3.76 1.45l2.57-2.47C16.84 3.94 14.66 3 12 3 6.92 3 2.85 7.06 2.85 12s4.07 9 9.15 9c5.27 0 8.78-3.7 8.78-8.92 0-.6-.07-1.06-.16-1.48z"
-      />
-    </svg>
   );
 }

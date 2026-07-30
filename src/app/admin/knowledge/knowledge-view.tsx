@@ -131,14 +131,14 @@ export function KnowledgeView({ documents }: { documents: Doc[] }) {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.04] px-3 py-1.5 text-xs text-text-2 ring-1 ring-white/[0.06]">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 text-xs text-text-2 ring-1 ring-border">
             <Database size={12} /> pgvector · 1536 dims
           </span>
         </div>
       </div>
 
       {/* Upload card */}
-      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl">
+      <div className="rounded-2xl border border-border bg-card p-6 backdrop-blur-xl">
         <div className="flex items-center gap-2 text-sm font-semibold">
           <Upload size={15} /> Upload a document
         </div>
@@ -156,7 +156,7 @@ export function KnowledgeView({ documents }: { documents: Doc[] }) {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. NexCart company handbook"
-                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm outline-none focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/20"
+                className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/20"
               />
             </label>
             <label className="block min-w-0">
@@ -168,7 +168,7 @@ export function KnowledgeView({ documents }: { documents: Doc[] }) {
                 type="file"
                 accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
                 onChange={onFileChange}
-                className="block w-full cursor-pointer rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-text-2 file:mr-3 file:rounded-full file:border-0 file:bg-white/[0.07] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-white hover:file:bg-white/[0.12]"
+                className="block w-full cursor-pointer rounded-xl border border-border bg-card px-3 py-2 text-sm text-text-2 file:mr-3 file:rounded-full file:border-0 file:bg-card-2 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-text hover:file:bg-surface-2"
               />
             </label>
           </div>
@@ -209,11 +209,11 @@ export function KnowledgeView({ documents }: { documents: Doc[] }) {
       </div>
 
       {/* Documents list */}
-      <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
-        <div className="border-b border-white/[0.06] p-5">
+      <div className="overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-xl">
+        <div className="border-b border-border p-5">
           <div className="text-sm font-semibold">Indexed documents</div>
           <div className="text-xs text-text-2">
-            The chat assistant searches across all <span className="text-white">ready</span> documents.
+            The chat assistant searches across all <span className="text-text">ready</span> documents.
           </div>
         </div>
 
@@ -227,7 +227,7 @@ export function KnowledgeView({ documents }: { documents: Doc[] }) {
             </p>
           </div>
         ) : (
-          <ul className="divide-y divide-white/[0.06]">
+          <ul className="divide-y divide-border">
             {documents.map((d, i) => (
               <motion.li
                 key={d.id}
@@ -236,7 +236,7 @@ export function KnowledgeView({ documents }: { documents: Doc[] }) {
                 transition={{ duration: 0.25, delay: i * 0.03 }}
                 className="flex items-center gap-4 p-4"
               >
-                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/[0.04] text-primary-300 ring-1 ring-white/[0.06]">
+                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-card text-primary-300 ring-1 ring-border">
                   <FileText size={16} />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -262,7 +262,7 @@ export function KnowledgeView({ documents }: { documents: Doc[] }) {
                   onClick={() => onDelete(d.id, d.title)}
                   disabled={deletingId === d.id}
                   aria-label="Delete document"
-                  className="grid h-8 w-8 place-items-center rounded-lg text-text-2 hover:bg-white/[0.05] hover:text-rose-400 disabled:opacity-50"
+                  className="grid h-8 w-8 place-items-center rounded-lg text-text-2 hover:bg-card-2 hover:text-rose-400 disabled:opacity-50"
                 >
                   {deletingId === d.id ? (
                     <Loader2 size={14} className="animate-spin" />

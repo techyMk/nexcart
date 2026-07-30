@@ -288,9 +288,8 @@ export function AIAssistantFab() {
           <Image
             src="/brand/bot-icon.webp"
             alt=""
-            width={256}
-            height={256}
-            priority
+            width={72}
+            height={72}
             className="h-9 w-9 object-contain drop-shadow"
           />
         )}
@@ -303,17 +302,17 @@ export function AIAssistantFab() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 360, damping: 32 }}
-            className="fixed bottom-[8.5rem] right-3 z-[60] flex h-[70vh] w-[94vw] max-w-sm flex-col overflow-hidden rounded-3xl border border-white/[0.08] bg-surface/95 shadow-card backdrop-blur-2xl sm:right-6 md:bottom-24"
+            className="fixed bottom-[8.5rem] right-3 z-[60] flex h-[70vh] w-[94vw] max-w-sm flex-col overflow-hidden rounded-3xl border border-border bg-surface/95 shadow-card backdrop-blur-2xl sm:right-6 md:bottom-24"
           >
-            <div className="relative border-b border-white/[0.06] p-5">
+            <div className="relative border-b border-border p-5">
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary-400/40 to-transparent" />
               <div className="flex items-center gap-3">
                 <div className="grid h-10 w-10 place-items-center overflow-hidden rounded-xl bg-gradient-brand shadow-glow">
                   <Image
                     src="/brand/bot-icon.webp"
                     alt=""
-                    width={256}
-                    height={256}
+                    width={56}
+                    height={56}
                     className="h-7 w-7 object-contain drop-shadow"
                   />
                 </div>
@@ -329,7 +328,7 @@ export function AIAssistantFab() {
                   <button
                     onClick={reset}
                     aria-label="Start new chat"
-                    className="grid h-8 w-8 place-items-center rounded-full text-text-2 hover:bg-white/[0.05] hover:text-white"
+                    className="grid h-8 w-8 place-items-center rounded-full text-text-2 hover:bg-card-2 hover:text-text"
                   >
                     <RefreshCw size={14} />
                   </button>
@@ -340,7 +339,7 @@ export function AIAssistantFab() {
             <div ref={scrollRef} className="flex-1 overflow-y-auto p-5">
               {messages.length === 0 ? (
                 <div className="space-y-2">
-                  <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-3 text-sm text-text">
+                  <div className="rounded-2xl border border-border bg-card p-3 text-sm text-text">
                     Hi! I&apos;m NexCart Intelligence. Ask me anything about
                     our products, policies, shipping, returns, or company.
                   </div>
@@ -351,7 +350,7 @@ export function AIAssistantFab() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.06 }}
                       onClick={() => void send(s)}
-                      className="block w-full rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-2.5 text-left text-sm text-text-2 transition hover:border-white/[0.14] hover:bg-white/[0.04] hover:text-white"
+                      className="block w-full rounded-xl border border-border bg-card px-4 py-2.5 text-left text-sm text-text-2 transition hover:border-text/20 hover:bg-card-2 hover:text-text"
                     >
                       {s}
                     </motion.button>
@@ -379,7 +378,7 @@ export function AIAssistantFab() {
                           className={
                             m.role === "user"
                               ? "rounded-2xl rounded-br-md bg-gradient-brand px-3 py-2 text-sm text-white"
-                              : "rounded-2xl rounded-bl-md bg-white/[0.04] px-3 py-2 text-sm text-text"
+                              : "rounded-2xl rounded-bl-md bg-card px-3 py-2 text-sm text-text"
                           }
                         >
                           {m.content ? (
@@ -429,7 +428,7 @@ export function AIAssistantFab() {
                           {m.sources.map((s) => (
                             <span
                               key={s}
-                              className="rounded-full bg-white/[0.04] px-1.5 py-0.5 ring-1 ring-white/[0.06]"
+                              className="rounded-full bg-card px-1.5 py-0.5 ring-1 ring-border"
                             >
                               {s}
                             </span>
@@ -449,10 +448,10 @@ export function AIAssistantFab() {
               )}
             </div>
 
-            <div className="border-t border-white/[0.06] p-3">
+            <div className="border-t border-border p-3">
               <form
                 onSubmit={onSubmit}
-                className="flex items-center gap-2 rounded-2xl border border-white/[0.06] bg-white/[0.03] px-3 py-2"
+                className="flex items-center gap-2 rounded-2xl border border-border bg-card px-3 py-2"
               >
                 <input
                   ref={inputRef}
@@ -495,16 +494,16 @@ function ChatMarkdown({ content }: { content: string }) {
         components={{
           p: ({ children }) => <p className="my-1.5">{children}</p>,
           strong: ({ children }) => (
-            <strong className="font-semibold text-white">{children}</strong>
+            <strong className="font-semibold text-text">{children}</strong>
           ),
           em: ({ children }) => <em className="italic">{children}</em>,
           code: ({ children }) => (
-            <code className="rounded bg-white/[0.06] px-1 py-0.5 font-mono text-[12px] text-primary-200 ring-1 ring-white/10">
+            <code className="rounded bg-card-2 px-1 py-0.5 font-mono text-[12px] text-primary-700 ring-1 ring-border dark:text-primary-200">
               {children}
             </code>
           ),
           pre: ({ children }) => (
-            <pre className="my-2 overflow-x-auto rounded-lg bg-white/[0.04] p-2 font-mono text-[12px] ring-1 ring-white/10">
+            <pre className="my-2 overflow-x-auto rounded-lg bg-card p-2 font-mono text-[12px] ring-1 ring-border">
               {children}
             </pre>
           ),
@@ -526,38 +525,38 @@ function ChatMarkdown({ content }: { content: string }) {
             </a>
           ),
           h1: ({ children }) => (
-            <div className="mt-2 mb-1 text-base font-semibold text-white">
+            <div className="mt-2 mb-1 text-base font-semibold text-text">
               {children}
             </div>
           ),
           h2: ({ children }) => (
-            <div className="mt-2 mb-1 text-sm font-semibold text-white">
+            <div className="mt-2 mb-1 text-sm font-semibold text-text">
               {children}
             </div>
           ),
           h3: ({ children }) => (
-            <div className="mt-2 mb-1 text-sm font-semibold text-white">
+            <div className="mt-2 mb-1 text-sm font-semibold text-text">
               {children}
             </div>
           ),
           blockquote: ({ children }) => (
-            <blockquote className="my-1.5 border-l-2 border-white/20 pl-2 text-text-2">
+            <blockquote className="my-1.5 border-l-2 border-border pl-2 text-text-2">
               {children}
             </blockquote>
           ),
-          hr: () => <hr className="my-2 border-white/[0.06]" />,
+          hr: () => <hr className="my-2 border-border" />,
           table: ({ children }) => (
             <div className="my-2 overflow-x-auto">
               <table className="w-full border-collapse text-[12px]">{children}</table>
             </div>
           ),
           th: ({ children }) => (
-            <th className="border border-white/[0.08] bg-white/[0.04] px-2 py-1 text-left font-medium text-white">
+            <th className="border border-border bg-card px-2 py-1 text-left font-medium text-text">
               {children}
             </th>
           ),
           td: ({ children }) => (
-            <td className="border border-white/[0.06] px-2 py-1">{children}</td>
+            <td className="border border-border px-2 py-1">{children}</td>
           ),
         }}
       >
@@ -585,7 +584,7 @@ function IconAction({
       disabled={disabled}
       aria-label={label}
       title={label}
-      className="grid h-6 w-6 place-items-center rounded-full text-text-2 transition hover:bg-white/[0.06] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+      className="grid h-6 w-6 place-items-center rounded-full text-text-2 transition hover:bg-card-2 hover:text-text disabled:cursor-not-allowed disabled:opacity-40"
     >
       {children}
     </button>
@@ -605,7 +604,7 @@ function UserAvatar({
     <span
       title={name}
       aria-label={name}
-      className="relative inline-flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-brand text-[10px] font-semibold text-white ring-1 ring-white/20"
+      className="relative inline-flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-brand text-[10px] font-semibold text-white ring-1 ring-border"
     >
       {src ? (
         <Image

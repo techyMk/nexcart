@@ -36,7 +36,7 @@ export default function AdminCustomers() {
         </button>
       </div>
 
-      <div className="flex items-center gap-2 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-3 backdrop-blur-xl">
+      <div className="flex items-center gap-2 rounded-2xl border border-border bg-card p-3 backdrop-blur-xl">
         <div className="relative flex-1">
           <Search
             size={15}
@@ -44,14 +44,14 @@ export default function AdminCustomers() {
           />
           <input
             placeholder="Search customers…"
-            className="h-10 w-full rounded-full border border-white/[0.06] bg-white/[0.03] pl-9 pr-4 text-sm outline-none placeholder:text-text-2 focus:border-white/[0.14]"
+            className="h-10 w-full rounded-full border border-border bg-card pl-9 pr-4 text-sm outline-none placeholder:text-text-2 focus:border-primary-400/60"
           />
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
+      <div className="overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-xl">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-white/[0.06] bg-white/[0.02] text-xs uppercase tracking-widest text-text-2">
+          <thead className="border-b border-border bg-card text-xs uppercase tracking-widest text-text-2">
             <tr>
               <th className="px-5 py-3 font-medium">Customer</th>
               <th className="px-5 py-3 font-medium">Tier</th>
@@ -60,12 +60,12 @@ export default function AdminCustomers() {
               <th className="px-5 py-3 font-medium" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/[0.06]">
+          <tbody className="divide-y divide-border">
             {seed.map(([name, email, tier, orders, ltv], i) => (
-              <tr key={email as string} className="transition hover:bg-white/[0.02]">
+              <tr key={email as string} className="transition hover:bg-card">
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-3">
-                    <span className="relative inline-block h-9 w-9 overflow-hidden rounded-full ring-1 ring-white/10">
+                    <span className="relative inline-block h-9 w-9 overflow-hidden rounded-full ring-1 ring-border">
                       <Image
                         src={avatars[i % avatars.length]}
                         alt=""
@@ -80,7 +80,7 @@ export default function AdminCustomers() {
                   </div>
                 </td>
                 <td className="px-5 py-3">
-                  <span className="rounded-full bg-white/[0.04] px-2.5 py-1 text-xs text-text ring-1 ring-white/[0.06]">
+                  <span className="rounded-full bg-card px-2.5 py-1 text-xs text-text ring-1 ring-border">
                     {tier as string}
                   </span>
                 </td>
@@ -89,7 +89,7 @@ export default function AdminCustomers() {
                   {ltv as string}
                 </td>
                 <td className="px-5 py-3 text-right">
-                  <button className="inline-flex h-8 items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-3 text-xs text-text-2 hover:text-white">
+                  <button className="inline-flex h-8 items-center gap-2 rounded-full border border-border bg-card px-3 text-xs text-text-2 hover:text-text">
                     <Mail size={12} /> Message
                   </button>
                 </td>

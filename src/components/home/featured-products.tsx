@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { products } from "@/lib/data";
@@ -10,21 +8,16 @@ export function FeaturedProducts() {
   return (
     <section className="section">
       <div className="container">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <div className="section-eyebrow">Hand-picked</div>
-            <h2 className="section-title mt-2">
-              Featured <span className="text-gradient-brand">products</span>
-            </h2>
-            <p className="mt-3 max-w-xl text-text-2">
-              Ranked by NexCart Intelligence™ — these are loved by buyers like
-              you this week.
-            </p>
-          </div>
-          <Link
-            href="/shop"
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.03] px-4 py-2 text-sm text-text-2 hover:bg-white/[0.06] hover:text-white"
-          >
+        <div className="mb-10 text-center">
+          <div className="section-eyebrow">Hand-picked</div>
+          <h2 className="section-title mt-2">
+            Featured <span className="text-gradient-brand">products</span>
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-text-2">
+            Ranked by NexCart Intelligence™ — these are loved by buyers like
+            you this week.
+          </p>
+          <Link href="/shop" className="btn btn-ghost btn-sm mt-5">
             See all products <ArrowRight size={14} />
           </Link>
         </div>

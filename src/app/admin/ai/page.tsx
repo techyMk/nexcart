@@ -225,11 +225,11 @@ export default async function AdminAIInsights() {
         {kpis.map((k) => (
           <div
             key={k.l}
-            className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 backdrop-blur-xl"
+            className="rounded-2xl border border-border bg-card p-5 backdrop-blur-xl"
           >
             <div className="flex items-center justify-between text-xs text-text-2">
               <span>{k.l}</span>
-              <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/[0.04] text-primary-300 ring-1 ring-white/[0.06]">
+              <span className="grid h-8 w-8 place-items-center rounded-lg bg-card text-primary-300 ring-1 ring-border">
                 <k.Icon size={14} />
               </span>
             </div>
@@ -249,7 +249,7 @@ export default async function AdminAIInsights() {
 
       {/* Revenue chart + actions */}
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl">
+        <div className="rounded-2xl border border-border bg-card p-6 backdrop-blur-xl">
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm font-semibold">Revenue · last 14 days</div>
@@ -265,7 +265,7 @@ export default async function AdminAIInsights() {
           </div>
 
           {revenue.length === 0 ? (
-            <div className="mt-6 grid h-48 place-items-center rounded-xl border border-dashed border-white/[0.08] text-center">
+            <div className="mt-6 grid h-48 place-items-center rounded-xl border border-dashed border-border text-center">
               <div>
                 <ShoppingBag size={20} className="mx-auto text-text-2" />
                 <div className="mt-2 text-sm font-medium">No orders yet</div>
@@ -305,7 +305,7 @@ export default async function AdminAIInsights() {
           )}
         </div>
 
-        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl">
+        <div className="rounded-2xl border border-border bg-card p-6 backdrop-blur-xl">
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm font-semibold">Recommended actions</div>
@@ -321,7 +321,7 @@ export default async function AdminAIInsights() {
             {signals.map((s) => (
               <li
                 key={s.title}
-                className="flex items-start gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4"
+                className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4"
               >
                 <span
                   className={`mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl ring-1 ${toneStyles[s.tone]}`}
@@ -333,7 +333,7 @@ export default async function AdminAIInsights() {
                   <p className="mt-0.5 text-sm text-text-2">{s.body}</p>
                   <Link
                     href={s.actionHref}
-                    className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-primary-300 hover:text-white"
+                    className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-primary-300 hover:text-text"
                   >
                     {s.actionLabel} <ArrowUpRight size={11} />
                   </Link>
@@ -346,15 +346,15 @@ export default async function AdminAIInsights() {
 
       {/* Low-stock + recently indexed docs */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
-          <div className="flex items-center justify-between border-b border-white/[0.06] p-5">
+        <div className="overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-xl">
+          <div className="flex items-center justify-between border-b border-border p-5">
             <div>
               <div className="text-sm font-semibold">Low-stock alerts</div>
               <div className="text-xs text-text-2">Products under 10 units</div>
             </div>
             <Link
               href="/admin/products"
-              className="text-xs text-text-2 hover:text-white"
+              className="text-xs text-text-2 hover:text-text"
             >
               All products →
             </Link>
@@ -368,7 +368,7 @@ export default async function AdminAIInsights() {
               </div>
             </div>
           ) : (
-            <ul className="divide-y divide-white/[0.06]">
+            <ul className="divide-y divide-border">
               {lowStock.map((p) => {
                 const cat = Array.isArray(p.category)
                   ? p.category[0]
@@ -402,8 +402,8 @@ export default async function AdminAIInsights() {
           )}
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
-          <div className="flex items-center justify-between border-b border-white/[0.06] p-5">
+        <div className="overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-xl">
+          <div className="flex items-center justify-between border-b border-border p-5">
             <div>
               <div className="text-sm font-semibold">Knowledge base</div>
               <div className="text-xs text-text-2">
@@ -412,7 +412,7 @@ export default async function AdminAIInsights() {
             </div>
             <Link
               href="/admin/knowledge"
-              className="text-xs text-text-2 hover:text-white"
+              className="text-xs text-text-2 hover:text-text"
             >
               Manage →
             </Link>
@@ -429,7 +429,7 @@ export default async function AdminAIInsights() {
               </Link>
             </div>
           ) : (
-            <ul className="divide-y divide-white/[0.06]">
+            <ul className="divide-y divide-border">
               {docs.map((d) => (
                 <li key={d.id} className="flex items-center gap-4 p-4">
                   <span className="grid h-9 w-9 place-items-center rounded-xl bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/30">
@@ -456,7 +456,7 @@ export default async function AdminAIInsights() {
 
 function Stat({ l, v }: { l: string; v: string }) {
   return (
-    <div className="rounded-xl bg-white/[0.03] py-2">
+    <div className="rounded-xl bg-card py-2">
       <div className="text-sm font-semibold">{v}</div>
       <div className="text-[10px] uppercase tracking-widest text-text-2">{l}</div>
     </div>

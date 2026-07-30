@@ -5,20 +5,23 @@ import { ArrowRight, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useCart } from "@/store/cart";
 import { formatPrice } from "@/lib/utils";
 import { useAuth } from "@/components/auth-provider";
 import { useAuthGate } from "@/store/auth-gate";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/constants";
 
 export function CartDrawer() {
   const router = useRouter();
   const { open, closeCart, lines, setQty, remove } = useCart();
   const { user } = useAuth();
   const openGate = useAuthGate((s) => s.openGate);
+  const asideRef = useRef<HTMLElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const lastActiveRef = useRef<HTMLElement | null>(null);
   const subtotal = lines.reduce((a, l) => a + l.price * l.quantity, 0);
-  const shippingFree = 500;
-  const progress = Math.min(100, (subtotal / shippingFree) * 100);
+  const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -26,6 +29,49 @@ export function CartDrawer() {
       document.body.style.overflow = "";
     };
   }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    lastActiveRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    closeBtnRef.current?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        closeCart();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const aside = asideRef.current;
+      if (!aside) return;
+      const focusables = Array.from(
+        aside.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey) {
+        if (active === first || !aside.contains(active)) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else if (active === last || !aside.contains(active)) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      lastActiveRef.current?.focus();
+    };
+  }, [open, closeCart]);
 
   return (
     <AnimatePresence>
@@ -39,13 +85,17 @@ export function CartDrawer() {
             className="fixed inset-0 z-[60] bg-bg/60 backdrop-blur-md"
           />
           <motion.aside
+            ref={asideRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Shopping cart"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 360, damping: 36 }}
-            className="fixed right-0 top-0 z-[70] flex h-full w-full max-w-md flex-col border-l border-white/[0.06] bg-surface/95 backdrop-blur-2xl"
+            className="fixed right-0 top-0 z-[70] flex h-full w-full max-w-md flex-col border-l border-border bg-surface/95 backdrop-blur-2xl"
           >
-            <div className="flex items-center justify-between border-b border-white/[0.06] px-6 py-4">
+            <div className="flex items-center justify-between border-b border-border px-6 py-4">
               <div>
                 <div className="font-display text-lg font-semibold">Your Cart</div>
                 <div className="text-xs text-text-2">
@@ -53,8 +103,9 @@ export function CartDrawer() {
                 </div>
               </div>
               <button
+                ref={closeBtnRef}
                 onClick={closeCart}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-2 hover:bg-white/[0.05] hover:text-white"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-2 hover:bg-card-2 hover:text-text"
                 aria-label="Close cart"
               >
                 <X size={18} />
@@ -63,18 +114,18 @@ export function CartDrawer() {
 
             {lines.length > 0 && (
               <div className="px-6 pt-4">
-                <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-3">
+                <div className="rounded-2xl border border-border bg-card p-3">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-text-2">
-                      {subtotal >= shippingFree
+                      {subtotal >= FREE_SHIPPING_THRESHOLD
                         ? "You unlocked free shipping ✨"
-                        : `Spend ${formatPrice(shippingFree - subtotal)} more for free shipping`}
+                        : `Spend ${formatPrice(FREE_SHIPPING_THRESHOLD - subtotal)} more for free shipping`}
                     </span>
                     <span className="text-text-2">
-                      {formatPrice(subtotal)} / {formatPrice(shippingFree)}
+                      {formatPrice(subtotal)} / {formatPrice(FREE_SHIPPING_THRESHOLD)}
                     </span>
                   </div>
-                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-card-2">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${progress}%` }}
@@ -89,7 +140,7 @@ export function CartDrawer() {
             <div className="flex-1 overflow-y-auto px-6 py-4">
               {lines.length === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center text-center">
-                  <div className="mb-4 grid h-16 w-16 place-items-center rounded-full bg-white/[0.03]">
+                  <div className="mb-4 grid h-16 w-16 place-items-center rounded-full bg-card">
                     <ShoppingBag size={22} className="text-primary-400" />
                   </div>
                   <div className="font-display text-lg font-semibold">
@@ -111,9 +162,9 @@ export function CartDrawer() {
                   {lines.map((l) => (
                     <li
                       key={l.id}
-                      className="flex gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-3"
+                      className="flex gap-3 rounded-2xl border border-border bg-card p-3"
                     >
-                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-white/[0.04]">
+                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-card">
                         <Image src={l.image} alt={l.name} fill className="object-cover" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -127,25 +178,31 @@ export function CartDrawer() {
                           </Link>
                           <button
                             onClick={() => remove(l.id)}
-                            className="text-text-2 hover:text-danger"
+                            className="grid h-9 w-9 place-items-center rounded-full text-text-2 hover:bg-card-2 hover:text-danger"
                             aria-label="Remove"
                           >
                             <Trash2 size={15} />
                           </button>
                         </div>
                         <div className="mt-2 flex items-center justify-between">
-                          <div className="inline-flex items-center rounded-full border border-white/[0.06] bg-white/[0.02]">
+                          <div className="inline-flex items-center rounded-full border border-border bg-card">
                             <button
                               onClick={() => setQty(l.id, l.quantity - 1)}
-                              className="grid h-7 w-7 place-items-center text-text-2 hover:text-white"
+                              className="grid h-9 w-9 place-items-center text-text-2 hover:text-text"
                               aria-label="Decrease"
                             >
                               <Minus size={13} />
                             </button>
-                            <span className="w-6 text-center text-xs">{l.quantity}</span>
+                            <span className="w-8 text-center text-xs">{l.quantity}</span>
                             <button
                               onClick={() => setQty(l.id, l.quantity + 1)}
-                              className="grid h-7 w-7 place-items-center text-text-2 hover:text-white"
+                              disabled={l.stock != null && l.quantity >= l.stock}
+                              title={
+                                l.stock != null && l.quantity >= l.stock
+                                  ? "Max available"
+                                  : undefined
+                              }
+                              className="grid h-9 w-9 place-items-center text-text-2 hover:text-text disabled:opacity-40"
                               aria-label="Increase"
                             >
                               <Plus size={13} />
@@ -163,7 +220,7 @@ export function CartDrawer() {
             </div>
 
             {lines.length > 0 && (
-              <div className="border-t border-white/[0.06] p-6">
+              <div className="border-t border-border p-6">
                 <div className="mb-3 flex items-center justify-between text-sm">
                   <span className="text-text-2">Subtotal</span>
                   <span className="font-semibold">{formatPrice(subtotal)}</span>
@@ -177,9 +234,9 @@ export function CartDrawer() {
                     if (!user) {
                       closeCart();
                       openGate({
-                        title: "Sign in to checkout",
+                        title: "Your bag is saved",
                         description:
-                          "Sign in or create a free account to place your order securely.",
+                          "Sign in to complete your order — everything in your bag is kept safe across devices.",
                         intent: "checkout",
                       });
                       return;
@@ -193,7 +250,7 @@ export function CartDrawer() {
                 </button>
                 <button
                   onClick={closeCart}
-                  className="mt-2 w-full rounded-full py-2 text-sm text-text-2 hover:text-white"
+                  className="mt-2 w-full rounded-full py-2 text-sm text-text-2 hover:text-text"
                 >
                   Continue shopping
                 </button>

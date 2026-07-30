@@ -35,6 +35,11 @@ export async function GET() {
       webhookSecret: !!optionalEnv("STRIPE_WEBHOOK_SECRET"),
       configured: isStripeConfigured(),
     },
+    resend: {
+      apiKey: !!optionalEnv("RESEND_API_KEY"),
+      // Safe to echo — it's just the From header, no secret.
+      from: optionalEnv("RESEND_FROM") ?? null,
+    },
     siteUrl: optionalEnv("NEXT_PUBLIC_SITE_URL") ?? null,
   });
 }

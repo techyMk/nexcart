@@ -21,7 +21,7 @@ export default function AdminAnalytics() {
         </span>
       </div>
 
-      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl">
+      <div className="rounded-2xl border border-border bg-card p-6 backdrop-blur-xl">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <div className="text-sm font-semibold">Revenue vs orders</div>
@@ -43,7 +43,7 @@ export default function AdminAnalytics() {
         ].map((c) => (
           <div
             key={c.l}
-            className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 backdrop-blur-xl"
+            className="rounded-2xl border border-border bg-card p-5 backdrop-blur-xl"
           >
             <div className="text-xs uppercase tracking-widest text-text-2">{c.l}</div>
             <div className="mt-2 font-display text-2xl font-semibold tracking-tight">

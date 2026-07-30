@@ -45,11 +45,11 @@ export default function AdminDashboard() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: i * 0.05 }}
-            className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 backdrop-blur-xl"
+            className="rounded-2xl border border-border bg-card p-5 backdrop-blur-xl"
           >
             <div className="flex items-center justify-between text-xs text-text-2">
               <span>{k.l}</span>
-              <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/[0.04] text-primary-300 ring-1 ring-white/[0.06]">
+              <span className="grid h-8 w-8 place-items-center rounded-lg bg-card text-primary-300 ring-1 ring-border">
                 <k.Icon size={14} />
               </span>
             </div>
@@ -69,20 +69,20 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.6fr_1fr]">
-        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl">
+        <div className="rounded-2xl border border-border bg-card p-6 backdrop-blur-xl">
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm font-semibold">Revenue</div>
               <div className="text-xs text-text-2">Last 14 days</div>
             </div>
             <div className="flex items-center gap-2 text-xs">
-              <span className="rounded-full border border-white/[0.06] bg-white/[0.03] px-2.5 py-1 text-text-2">
+              <span className="rounded-full border border-border bg-card px-2.5 py-1 text-text-2">
                 Daily
               </span>
               <span className="rounded-full bg-gradient-brand px-2.5 py-1 font-semibold text-white">
                 Weekly
               </span>
-              <span className="rounded-full border border-white/[0.06] bg-white/[0.03] px-2.5 py-1 text-text-2">
+              <span className="rounded-full border border-border bg-card px-2.5 py-1 text-text-2">
                 Monthly
               </span>
             </div>
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl">
+        <div className="rounded-2xl border border-border bg-card p-6 backdrop-blur-xl">
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm font-semibold">AI Insights</div>
@@ -118,7 +118,7 @@ export default function AdminDashboard() {
             ].map((s, i) => (
               <li
                 key={s}
-                className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 text-sm"
+                className="flex items-start gap-3 rounded-xl border border-border bg-card p-3 text-sm"
               >
                 <span className="mt-0.5 grid h-6 w-6 place-items-center rounded-md bg-gradient-brand text-white">
                   <Sparkles size={12} />
@@ -131,17 +131,17 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
-          <div className="flex items-center justify-between border-b border-white/[0.06] p-5">
+        <div className="overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-xl">
+          <div className="flex items-center justify-between border-b border-border p-5">
             <div className="text-sm font-semibold">Recent orders</div>
-            <a className="text-xs text-text-2 hover:text-white" href="/admin/orders">
+            <a className="text-xs text-text-2 hover:text-text" href="/admin/orders">
               View all →
             </a>
           </div>
-          <ul className="divide-y divide-white/[0.06]">
+          <ul className="divide-y divide-border">
             {products.slice(0, 5).map((p, i) => (
               <li key={p.id} className="flex items-center gap-3 p-4">
-                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-white/[0.04]">
+                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-card">
                   <Image src={p.images[0]} alt="" fill className="object-cover" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -169,22 +169,22 @@ export default function AdminDashboard() {
           </ul>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
-          <div className="flex items-center justify-between border-b border-white/[0.06] p-5">
+        <div className="overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-xl">
+          <div className="flex items-center justify-between border-b border-border p-5">
             <div className="text-sm font-semibold">Top products</div>
-            <a className="text-xs text-text-2 hover:text-white" href="/admin/products">
+            <a className="text-xs text-text-2 hover:text-text" href="/admin/products">
               Manage →
             </a>
           </div>
-          <ul className="divide-y divide-white/[0.06]">
+          <ul className="divide-y divide-border">
             {products.slice(0, 5).map((p, i) => (
               <li key={p.id} className="flex items-center gap-3 p-4">
-                <div className="grid h-8 w-8 place-items-center rounded-lg bg-white/[0.04] text-xs text-text-2">
+                <div className="grid h-8 w-8 place-items-center rounded-lg bg-card text-xs text-text-2">
                   {i + 1}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-sm">{p.name}</div>
-                  <div className="mt-1 h-1 overflow-hidden rounded-full bg-white/[0.04]">
+                  <div className="mt-1 h-1 overflow-hidden rounded-full bg-card">
                     <div
                       className="h-full rounded-full bg-gradient-brand"
                       style={{ width: `${100 - i * 14}%` }}

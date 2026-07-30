@@ -16,15 +16,15 @@ export default function AdminSettings() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
-        <nav className="space-y-1 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-3 backdrop-blur-xl">
+        <nav className="space-y-1 rounded-2xl border border-border bg-card p-3 backdrop-blur-xl">
           {sections.map((s) => (
             <button
               key={s}
               onClick={() => setSection(s)}
               className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm transition ${
                 section === s
-                  ? "bg-white/[0.07] text-white ring-1 ring-white/[0.08]"
-                  : "text-text-2 hover:bg-white/[0.04] hover:text-white"
+                  ? "bg-card-2 text-text ring-1 ring-border"
+                  : "text-text-2 hover:bg-card-2 hover:text-text"
               }`}
             >
               {s}
@@ -37,7 +37,7 @@ export default function AdminSettings() {
           ))}
         </nav>
 
-        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl">
+        <div className="rounded-2xl border border-border bg-card p-6 backdrop-blur-xl">
           <div className="flex items-center justify-between">
             <div>
               <div className="font-display text-lg font-semibold">{section}</div>
@@ -72,7 +72,7 @@ export default function AdminSettings() {
             />
           </div>
 
-          <div className="mt-8 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
+          <div className="mt-8 rounded-2xl border border-border bg-card p-5">
             <div className="flex items-center gap-2 text-sm font-semibold">
               <Sparkles size={14} className="text-primary-300" /> AI Copilot
             </div>
@@ -98,13 +98,13 @@ function Toggle({
   defaultOn?: boolean;
 }) {
   return (
-    <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+    <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-card p-4">
       <span className="flex-1">
         <span className="block text-sm font-medium">{title}</span>
         <span className="mt-0.5 block text-xs text-text-2">{desc}</span>
       </span>
       <input type="checkbox" defaultChecked={defaultOn} className="peer sr-only" />
-      <span className="relative h-5 w-9 shrink-0 rounded-full bg-white/[0.08] transition peer-checked:bg-gradient-brand">
+      <span className="relative h-5 w-9 shrink-0 rounded-full bg-card-2 transition peer-checked:bg-gradient-brand">
         <span className="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition peer-checked:left-4" />
       </span>
     </label>

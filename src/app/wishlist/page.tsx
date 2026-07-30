@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,12 +8,15 @@ import { ArrowRight, Compass, Heart, ShoppingBag, Trash2 } from "lucide-react";
 import { useWishlist } from "@/store/wishlist";
 import { useCart } from "@/store/cart";
 import { formatPrice } from "@/lib/utils";
+import { products } from "@/lib/data";
 
 export default function WishlistPage() {
   const items = useWishlist((s) => s.items);
   const remove = useWishlist((s) => s.remove);
   const clear = useWishlist((s) => s.clear);
   const add = useCart((s) => s.add);
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
 
   return (
     <div className="pt-24 md:pt-32">
@@ -24,21 +28,29 @@ export default function WishlistPage() {
               Your <span className="text-gradient-brand">wishlist</span>
             </h1>
             <p className="mt-2 text-text-2">
-              {items.length} {items.length === 1 ? "item" : "items"} saved
+              {hydrated
+                ? `${items.length} ${items.length === 1 ? "item" : "items"} saved`
+                : "\u00A0"}
             </p>
           </div>
-          {items.length > 0 && (
-            <button
-              onClick={clear}
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.03] px-4 py-2 text-sm text-text-2 hover:text-white"
-            >
+          {hydrated && items.length > 0 && (
+            <button onClick={clear} className="btn btn-ghost btn-sm">
               <Trash2 size={14} /> Clear all
             </button>
           )}
         </div>
 
-        {items.length === 0 ? (
-          <div className="grid place-items-center rounded-3xl border border-white/[0.06] bg-white/[0.02] p-20 text-center backdrop-blur-xl">
+        {!hydrated ? (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="aspect-[4/5] animate-pulse rounded-2xl bg-card"
+              />
+            ))}
+          </div>
+        ) : items.length === 0 ? (
+          <div className="grid place-items-center rounded-3xl border border-border bg-card p-20 text-center backdrop-blur-xl">
             <div className="grid h-16 w-16 place-items-center rounded-full bg-rose-500/15 text-rose-300 ring-1 ring-rose-500/30">
               <Heart size={20} />
             </div>
@@ -62,10 +74,10 @@ export default function WishlistPage() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ duration: 0.25 }}
-                  className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl transition hover:-translate-y-1 hover:border-white/[0.14] hover:shadow-glow"
+                  className="group relative overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-xl transition hover:-translate-y-1 hover:border-text/20 hover:shadow-glow"
                 >
                   <Link href={`/product/${p.slug}`} className="block">
-                    <div className="relative aspect-[4/5] overflow-hidden bg-white/[0.04]">
+                    <div className="relative aspect-[4/5] overflow-hidden bg-card">
                       <Image
                         src={p.image}
                         alt={p.name}
@@ -108,6 +120,7 @@ export default function WishlistPage() {
                           name: p.name,
                           price: p.price,
                           image: p.image,
+                          stock: products.find((x) => x.id === p.id)?.stock,
                         })
                       }
                       className="btn btn-primary mt-4 w-full"
@@ -121,7 +134,7 @@ export default function WishlistPage() {
           </div>
         )}
 
-        {items.length > 0 && (
+        {hydrated && items.length > 0 && (
           <div className="mt-10 flex justify-center">
             <Link href="/shop" className="btn btn-ghost">
               Continue exploring <ArrowRight size={14} />
@@ -129,7 +142,6 @@ export default function WishlistPage() {
           </div>
         )}
       </div>
-      <div className="h-24" />
     </div>
   );
 }

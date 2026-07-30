@@ -1,0 +1,2 @@
+export const FREE_SHIPPING_THRESHOLD = 500;
+export const STANDARD_SHIPPING = 14;

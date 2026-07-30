@@ -46,7 +46,7 @@ export default function AdminOrders() {
         </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-3 backdrop-blur-xl">
+      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-card p-3 backdrop-blur-xl">
         <div className="relative flex-1 min-w-[220px]">
           <Search
             size={15}
@@ -54,22 +54,22 @@ export default function AdminOrders() {
           />
           <input
             placeholder="Search by order ID, customer or product…"
-            className="h-10 w-full rounded-full border border-white/[0.06] bg-white/[0.03] pl-9 pr-4 text-sm outline-none placeholder:text-text-2 focus:border-white/[0.14]"
+            className="h-10 w-full rounded-full border border-border bg-card pl-9 pr-4 text-sm outline-none placeholder:text-text-2 focus:border-primary-400/60"
           />
         </div>
         {STATUSES.map((s) => (
           <button
             key={s}
-            className="inline-flex h-10 items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-4 text-sm text-text-2 hover:text-white"
+            className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm text-text-2 hover:text-text"
           >
             {s}
           </button>
         ))}
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
+      <div className="overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-xl">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-white/[0.06] bg-white/[0.02] text-xs uppercase tracking-widest text-text-2">
+          <thead className="border-b border-border bg-card text-xs uppercase tracking-widest text-text-2">
             <tr>
               <th className="px-5 py-3 font-medium">Order</th>
               <th className="px-5 py-3 font-medium">Customer</th>
@@ -79,9 +79,9 @@ export default function AdminOrders() {
               <th className="px-5 py-3 font-medium">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/[0.06]">
+          <tbody className="divide-y divide-border">
             {orders.map((o) => (
-              <tr key={o.id} className="transition hover:bg-white/[0.02]">
+              <tr key={o.id} className="transition hover:bg-card">
                 <td className="px-5 py-3 font-mono text-xs">#NX-{o.id}</td>
                 <td className="px-5 py-3">{o.customer}</td>
                 <td className="px-5 py-3 text-text-2">{o.product}</td>

@@ -2,23 +2,28 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { BrandLogo } from "@/components/brand-logo";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   Headphones,
   Heart,
   Menu,
+  Moon,
   RotateCcw,
   Search,
   ShieldCheck,
   ShoppingBag,
+  Sun,
   Truck,
   User,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/theme-provider";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/constants";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
 import { useCommandPalette } from "@/store/command";
@@ -33,11 +38,106 @@ const links = [
   { href: "/about", label: "About" },
 ];
 
+/* Shop, AI Picks and Deals share the /shop pathname and differ only by query,
+   so active state must compare the full href, not just the pathname. */
+function isLinkActive(href: string, current: string) {
+  const [hPath, hQuery] = href.split("?");
+  const [cPath, cQuery = ""] = current.split("?");
+  if (hPath !== cPath) return false;
+  const cp = new URLSearchParams(cQuery);
+  if (hQuery) {
+    const hp = new URLSearchParams(hQuery);
+    for (const [k, v] of hp.entries()) if (cp.get(k) !== v) return false;
+    return true;
+  }
+  return cp.get("ai") !== "1" && cp.get("sale") !== "1";
+}
+
+/* useSearchParams needs a Suspense boundary for static prerendering; the
+   boundary fallback renders the same links matched on pathname alone. */
+function useCurrentHref() {
+  const pathname = usePathname();
+  const qs = useSearchParams().toString();
+  return qs ? `${pathname}?${qs}` : pathname;
+}
+
+function DesktopNavLinks({ current }: { current: string }) {
+  return (
+    <>
+      {links.map((l) => {
+        const active = isLinkActive(l.href, current);
+        return (
+          <Link
+            key={l.href}
+            href={l.href}
+            className={cn(
+              "relative rounded-full px-4 py-2 text-sm transition-colors",
+              active ? "text-text" : "text-text-2 hover:text-text",
+            )}
+          >
+            {active && (
+              <motion.span
+                layoutId="nav-bubble"
+                className="absolute inset-0 -z-10 rounded-full bg-card-2 ring-1 ring-border"
+                transition={{ type: "spring", stiffness: 380, damping: 32 }}
+              />
+            )}
+            {l.label}
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+
+function DesktopNavLinksActive() {
+  return <DesktopNavLinks current={useCurrentHref()} />;
+}
+
+function MobileNavLinks({
+  current,
+  onNavigate,
+}: {
+  current: string;
+  onNavigate: () => void;
+}) {
+  return (
+    <>
+      {links.map((l) => {
+        const active = isLinkActive(l.href, current);
+        return (
+          <Link
+            key={l.href}
+            href={l.href}
+            onClick={onNavigate}
+            className={cn(
+              "rounded-xl px-3 py-3 text-sm transition",
+              active
+                ? "bg-card-2 text-text ring-1 ring-border"
+                : "text-text-2 hover:bg-card-2 hover:text-text",
+            )}
+          >
+            {l.label}
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+
+function MobileNavLinksActive({ onNavigate }: { onNavigate: () => void }) {
+  return <MobileNavLinks current={useCurrentHref()} onNavigate={onNavigate} />;
+}
+
 export function Navbar() {
   const pathname = usePathname();
   const { user } = useAuth();
+  const { toggle: toggleTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
+  // Badges read persisted zustand stores (localStorage) — render them only
+  // after hydration to avoid an SSR mismatch and a flash of stale counts.
+  const [hydrated, setHydrated] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [fullName, setFullName] = useState<string | null>(null);
   const openCart = useCart((s) => s.openCart);
@@ -98,6 +198,8 @@ export function Navbar() {
     .join("")
     .toUpperCase();
 
+  useEffect(() => setHydrated(true), []);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
     onScroll();
@@ -124,7 +226,7 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter] duration-300",
+        "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
         scrolled || menu ? "bg-bg/85 backdrop-blur-xl" : "bg-transparent",
       )}
     >
@@ -135,51 +237,28 @@ export function Navbar() {
           aria-label="NexCart home"
           className="group inline-flex items-center"
         >
-          <Image
-            src="/brand/nexcart-logo.webp"
-            alt="NexCart"
-            width={1200}
-            height={600}
+          <BrandLogo
             priority
             className="h-9 w-auto transition-transform group-hover:scale-[1.02] sm:h-10 md:h-16"
           />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
-          {links.map((l) => {
-            const active = l.href === pathname;
-            return (
-              <Link
-                key={l.href}
-                href={l.href}
-                className={cn(
-                  "relative rounded-full px-4 py-2 text-sm transition-colors",
-                  active ? "text-white" : "text-text-2 hover:text-white",
-                )}
-              >
-                {active && (
-                  <motion.span
-                    layoutId="nav-bubble"
-                    className="absolute inset-0 -z-10 rounded-full bg-white/[0.07] ring-1 ring-white/[0.08]"
-                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                  />
-                )}
-                {l.label}
-              </Link>
-            );
-          })}
+          <Suspense fallback={<DesktopNavLinks current={pathname} />}>
+            <DesktopNavLinksActive />
+          </Suspense>
         </nav>
 
         <div className="flex items-center gap-0.5 sm:gap-1.5">
           {/* Desktop search pill */}
           <button
             onClick={openPalette}
-            className="hidden h-9 items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-3 text-sm text-text-2 transition hover:bg-white/[0.06] md:flex"
+            className="hidden h-9 items-center gap-2 rounded-full border border-border bg-card px-3 text-sm text-text-2 transition hover:bg-card-2 md:flex"
             aria-label="Open search"
           >
             <Search size={15} />
             <span className="hidden lg:inline">Search products…</span>
-            <kbd className="ml-2 hidden rounded border border-white/10 bg-white/[0.04] px-1.5 py-0.5 text-[10px] text-text-2 lg:inline">
+            <kbd className="ml-2 hidden rounded border border-border bg-card px-1.5 py-0.5 text-[10px] text-text-2 lg:inline">
               ⌘K
             </kbd>
           </button>
@@ -188,19 +267,29 @@ export function Navbar() {
           <button
             onClick={openPalette}
             aria-label="Search"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-2 hover:bg-white/[0.05] hover:text-white md:hidden"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-2 hover:bg-card-2 hover:text-text md:hidden"
           >
             <Search size={17} />
+          </button>
+
+          {/* Theme toggle — Sun shows in dark (switch to light), Moon in light */}
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-2 hover:bg-card-2 hover:text-text"
+          >
+            <Sun size={17} className="hidden dark:block" />
+            <Moon size={17} className="dark:hidden" />
           </button>
 
           {/* Wishlist — desktop only (mobile users access via the menu) */}
           <Link
             href="/wishlist"
             aria-label={`Wishlist${wishCount > 0 ? ` (${wishCount})` : ""}`}
-            className="relative hidden h-9 w-9 items-center justify-center rounded-full text-text-2 hover:bg-white/[0.05] hover:text-white md:inline-flex"
+            className="relative hidden h-9 w-9 items-center justify-center rounded-full text-text-2 hover:bg-card-2 hover:text-text md:inline-flex"
           >
             <Heart size={17} />
-            {wishCount > 0 && (
+            {hydrated && wishCount > 0 && (
               <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-semibold leading-none text-white">
                 {wishCount}
               </span>
@@ -217,7 +306,7 @@ export function Navbar() {
               title={fullName ?? user.email ?? "Account"}
               className="relative inline-block h-9 w-9"
             >
-              <span className="grid h-full w-full place-items-center overflow-hidden rounded-full bg-gradient-brand text-[11px] font-semibold text-white ring-1 ring-white/15 transition hover:ring-white/30">
+              <span className="grid h-full w-full place-items-center overflow-hidden rounded-full bg-gradient-brand text-[11px] font-semibold text-white ring-1 ring-border transition hover:ring-text/20">
                 {avatarUrl ? (
                   <Image
                     src={avatarUrl}
@@ -237,7 +326,7 @@ export function Navbar() {
           ) : (
             <Link
               href="/account"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-2 hover:bg-white/[0.05] hover:text-white"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-2 hover:bg-card-2 hover:text-text"
               aria-label="Account"
             >
               <User size={18} />
@@ -247,12 +336,12 @@ export function Navbar() {
           {/* Cart — visible on all screens */}
           <button
             onClick={openCart}
-            className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-text-2 hover:bg-white/[0.05] hover:text-white"
+            className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-text-2 hover:bg-card-2 hover:text-text"
             aria-label={`Cart${count > 0 ? ` (${count} items)` : ""}`}
           >
             <ShoppingBag size={18} />
-            {count > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gradient-brand px-1 text-[10px] font-semibold leading-none text-white">
+            {hydrated && count > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gradient-brand-deep px-1 text-[10px] font-semibold leading-none text-white">
                 {count}
               </span>
             )}
@@ -262,19 +351,16 @@ export function Navbar() {
               visually distinct from the cart icon next to it. */}
           <Link
             href="/shop"
-            className="group ml-1 hidden h-9 items-center gap-1.5 rounded-full bg-gradient-brand px-4 text-sm font-medium text-white shadow-glow transition hover:brightness-110 md:inline-flex"
+            className="btn btn-primary btn-sm ml-1 hidden h-9 md:inline-flex"
           >
             Start Shopping
-            <ArrowRight
-              size={14}
-              className="transition-transform group-hover:translate-x-0.5"
-            />
+            <ArrowRight size={14} />
           </Link>
 
           {/* Hamburger — mobile only */}
           <button
             onClick={() => setMenu((v) => !v)}
-            className="ml-0.5 inline-flex h-9 w-9 items-center justify-center rounded-full text-text-2 hover:bg-white/[0.05] hover:text-white md:hidden"
+            className="ml-0.5 inline-flex h-9 w-9 items-center justify-center rounded-full text-text-2 hover:bg-card-2 hover:text-text md:hidden"
             aria-label={menu ? "Close menu" : "Open menu"}
             aria-expanded={menu}
           >
@@ -293,36 +379,28 @@ export function Navbar() {
             className="bg-bg/95 backdrop-blur-xl md:hidden"
           >
             <div className="container flex flex-col gap-1 py-4">
-              {links.map((l) => {
-                const active = l.href === pathname;
-                return (
-                  <Link
-                    key={l.href}
-                    href={l.href}
-                    onClick={() => setMenu(false)}
-                    className={cn(
-                      "rounded-xl px-3 py-3 text-sm transition",
-                      active
-                        ? "bg-white/[0.07] text-white ring-1 ring-white/[0.08]"
-                        : "text-text-2 hover:bg-white/[0.04] hover:text-white",
-                    )}
-                  >
-                    {l.label}
-                  </Link>
-                );
-              })}
+              <Suspense
+                fallback={
+                  <MobileNavLinks
+                    current={pathname}
+                    onNavigate={() => setMenu(false)}
+                  />
+                }
+              >
+                <MobileNavLinksActive onNavigate={() => setMenu(false)} />
+              </Suspense>
 
-              <div className="my-2 h-px bg-white/[0.06]" />
+              <div className="my-2 h-px bg-card-2" />
 
               <Link
                 href="/account"
                 onClick={() => setMenu(false)}
-                className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-text-2 transition hover:bg-white/[0.04] hover:text-white"
+                className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-text-2 transition hover:bg-card-2 hover:text-text"
               >
                 {user ? (
                   <>
                     <span className="relative inline-block h-6 w-6 shrink-0">
-                      <span className="grid h-full w-full place-items-center overflow-hidden rounded-full bg-gradient-brand text-[10px] font-semibold text-white ring-1 ring-white/15">
+                      <span className="grid h-full w-full place-items-center overflow-hidden rounded-full bg-gradient-brand text-[10px] font-semibold text-white ring-1 ring-border">
                         {avatarUrl ? (
                           <Image
                             src={avatarUrl}
@@ -339,7 +417,7 @@ export function Navbar() {
                       </span>
                       <span className="pointer-events-none absolute -bottom-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-emerald-400 ring-2 ring-bg" />
                     </span>
-                    <span className="truncate text-white">
+                    <span className="truncate text-text">
                       {fullName ?? user.email}
                     </span>
                   </>
@@ -353,10 +431,10 @@ export function Navbar() {
               <Link
                 href="/wishlist"
                 onClick={() => setMenu(false)}
-                className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-text-2 transition hover:bg-white/[0.04] hover:text-white"
+                className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-text-2 transition hover:bg-card-2 hover:text-text"
               >
                 <Heart size={15} /> Wishlist
-                {wishCount > 0 && (
+                {hydrated && wishCount > 0 && (
                   <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1.5 text-[10px] font-semibold text-white">
                     {wishCount}
                   </span>
@@ -380,35 +458,46 @@ export function Navbar() {
 }
 
 const trustItems = [
-  { Icon: Truck, label: "Free delivery over $50" },
+  { Icon: Truck, label: `Free delivery over $${FREE_SHIPPING_THRESHOLD}` },
   { Icon: RotateCcw, label: "7-day returns" },
   { Icon: ShieldCheck, label: "2-year warranty" },
   { Icon: Headphones, label: "24/7 support" },
 ];
 
 function TrustRow({ collapsed }: { collapsed: boolean }) {
+  // Collapses via grid-template-rows (GPU-friendly, no max-height layout
+  // thrash on every scroll-threshold crossing).
   return (
     <div
       aria-hidden={collapsed}
       className={cn(
-        "overflow-hidden border-b border-white/[0.04] bg-gradient-to-r from-primary-900/30 via-accent-purple/20 to-primary-900/30 backdrop-blur-xl transition-[max-height,opacity] duration-300 ease-out",
-        collapsed ? "max-h-0 opacity-0" : "max-h-10 opacity-100",
+        "grid transition-[grid-template-rows] duration-300 ease-out",
+        collapsed ? "[grid-template-rows:0fr]" : "[grid-template-rows:1fr]",
       )}
     >
-      <div className="container flex h-8 items-center justify-center gap-x-6 gap-y-1 overflow-hidden text-[11px] text-text-2 sm:gap-x-8">
-        {trustItems.map(({ Icon, label }, i) => (
-          <span
-            key={label}
-            className={cn(
-              "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap",
-              i > 0 && "hidden sm:inline-flex",
-              i > 1 && "sm:hidden md:inline-flex",
-            )}
-          >
-            <Icon size={12} className="text-primary-300" />
-            <span>{label}</span>
-          </span>
-        ))}
+      <div className="overflow-hidden">
+        <div
+          className={cn(
+            "border-b border-border bg-gradient-to-r from-primary-900/30 via-accent-purple/20 to-primary-900/30 backdrop-blur-xl transition-opacity duration-300 ease-out",
+            collapsed ? "opacity-0" : "opacity-100",
+          )}
+        >
+          <div className="container flex h-8 items-center justify-center gap-x-6 gap-y-1 overflow-hidden text-[11px] text-text-2 sm:gap-x-8">
+            {trustItems.map(({ Icon, label }, i) => (
+              <span
+                key={label}
+                className={cn(
+                  "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap",
+                  i > 0 && "hidden sm:inline-flex",
+                  i > 1 && "sm:hidden md:inline-flex",
+                )}
+              >
+                <Icon size={12} className="text-primary-300" />
+                <span>{label}</span>
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

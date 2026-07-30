@@ -21,7 +21,7 @@ export default function AdminCategories() {
         </button>
       </div>
 
-      <div className="flex items-center gap-2 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-3 backdrop-blur-xl">
+      <div className="flex items-center gap-2 rounded-2xl border border-border bg-card p-3 backdrop-blur-xl">
         <div className="relative flex-1">
           <Search
             size={15}
@@ -29,7 +29,7 @@ export default function AdminCategories() {
           />
           <input
             placeholder="Search categories…"
-            className="h-10 w-full rounded-full border border-white/[0.06] bg-white/[0.03] pl-9 pr-4 text-sm outline-none placeholder:text-text-2 focus:border-white/[0.14]"
+            className="h-10 w-full rounded-full border border-border bg-card pl-9 pr-4 text-sm outline-none placeholder:text-text-2 focus:border-primary-400/60"
           />
         </div>
       </div>
@@ -40,7 +40,7 @@ export default function AdminCategories() {
           return (
             <div
               key={c.id}
-              className="group relative overflow-hidden rounded-3xl border border-white/[0.06] bg-white/[0.02] p-5 backdrop-blur-xl transition hover:border-white/[0.14]"
+              className="group relative overflow-hidden rounded-3xl border border-border bg-card p-5 backdrop-blur-xl transition hover:border-text/20"
             >
               <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary-500/15 blur-3xl opacity-0 transition group-hover:opacity-100" />
               <div className="flex items-start justify-between gap-3">
@@ -58,20 +58,20 @@ export default function AdminCategories() {
                 <div className="flex gap-1">
                   <button
                     aria-label="Edit"
-                    className="grid h-8 w-8 place-items-center rounded-lg text-text-2 hover:bg-white/[0.06] hover:text-white"
+                    className="grid h-8 w-8 place-items-center rounded-lg text-text-2 hover:bg-card-2 hover:text-text"
                   >
                     <Pencil size={13} />
                   </button>
                   <button
                     aria-label="Delete"
-                    className="grid h-8 w-8 place-items-center rounded-lg text-text-2 hover:bg-white/[0.06] hover:text-rose-400"
+                    className="grid h-8 w-8 place-items-center rounded-lg text-text-2 hover:bg-card-2 hover:text-rose-400"
                   >
                     <Trash2 size={13} />
                   </button>
                 </div>
               </div>
               <div className="mt-4 flex items-center justify-between text-xs">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.04] px-2.5 py-1 text-text-2 ring-1 ring-white/[0.06]">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-card px-2.5 py-1 text-text-2 ring-1 ring-border">
                   <Tag size={11} /> {count} products
                 </span>
                 <span className="text-text-2">Updated 2d ago</span>

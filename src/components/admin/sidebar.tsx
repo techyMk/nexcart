@@ -49,7 +49,7 @@ const groups = [
 export function AdminSidebar() {
   const pathname = usePathname();
   return (
-    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 border-r border-white/[0.06] bg-surface/60 backdrop-blur-xl md:flex md:flex-col">
+    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 border-r border-border bg-surface/60 backdrop-blur-xl md:flex md:flex-col">
       <div className="flex items-center gap-3 px-5 py-5">
         <Image
           src="/brand/nexcart-icon.webp"
@@ -84,8 +84,8 @@ export function AdminSidebar() {
                       className={cn(
                         "flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition",
                         active
-                          ? "bg-white/[0.07] text-white ring-1 ring-white/[0.08]"
-                          : "text-text-2 hover:bg-white/[0.04] hover:text-white",
+                          ? "bg-card-2 text-text ring-1 ring-border"
+                          : "text-text-2 hover:bg-card-2 hover:text-text",
                       )}
                     >
                       <Icon size={15} />
@@ -101,10 +101,10 @@ export function AdminSidebar() {
           </div>
         ))}
       </nav>
-      <div className="border-t border-white/[0.06] p-3">
+      <div className="border-t border-border p-3">
         <Link
           href="/"
-          className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-text-2 transition hover:bg-white/[0.04] hover:text-white"
+          className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-text-2 transition hover:bg-card-2 hover:text-text"
         >
           <LogOut size={15} /> Exit admin
         </Link>

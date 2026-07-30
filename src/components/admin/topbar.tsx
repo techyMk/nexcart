@@ -39,7 +39,7 @@ export async function AdminTopbar() {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-white/[0.06] bg-surface/60 px-6 backdrop-blur-xl md:px-8">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-border bg-surface/60 px-6 backdrop-blur-xl md:px-8">
       <div className="flex flex-1 items-center gap-3">
         <div className="relative w-full max-w-md">
           <Search
@@ -48,7 +48,7 @@ export async function AdminTopbar() {
           />
           <input
             placeholder="Search products, orders, customers…"
-            className="h-10 w-full rounded-full border border-white/[0.06] bg-white/[0.03] pl-9 pr-4 text-sm outline-none placeholder:text-text-2 focus:border-white/[0.14]"
+            className="h-10 w-full rounded-full border border-border bg-card pl-9 pr-4 text-sm outline-none placeholder:text-text-2 focus:border-text/20"
           />
         </div>
       </div>
@@ -62,7 +62,7 @@ export async function AdminTopbar() {
         </Link>
         <button
           aria-label="Notifications"
-          className="relative grid h-9 w-9 place-items-center rounded-full border border-white/[0.06] bg-white/[0.03] text-text-2 hover:text-white"
+          className="relative grid h-9 w-9 place-items-center rounded-full border border-border bg-card text-text-2 hover:text-text"
         >
           <Bell size={15} />
           <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-gradient-brand" />
@@ -71,7 +71,7 @@ export async function AdminTopbar() {
           href="/account"
           aria-label={fullName ? `${fullName}'s account` : "Account"}
           title={email || fullName}
-          className="relative inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-gradient-brand text-xs font-semibold ring-1 ring-white/10 transition hover:ring-white/20"
+          className="relative inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-gradient-brand text-xs font-semibold ring-1 ring-border transition hover:ring-text/20"
         >
           {avatarUrl ? (
             <Image

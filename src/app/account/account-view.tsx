@@ -39,9 +39,7 @@ export type AccountViewProps = {
   }>;
 };
 
-const tabs = [
-  { Icon: Package, label: "Orders" },
-  { Icon: Heart, label: "Wishlist" },
+const comingSoonTabs = [
   { Icon: MapPin, label: "Addresses" },
   { Icon: CreditCard, label: "Payments" },
   { Icon: Settings, label: "Settings" },
@@ -138,16 +136,16 @@ export function AccountView({
 
         <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
           <aside className="space-y-6">
-            <div className="group relative rounded-3xl border border-white/[0.06] bg-white/[0.02] p-5 backdrop-blur-xl">
+            <div className="group relative rounded-3xl border border-border bg-card p-5 backdrop-blur-xl">
               <button
                 onClick={() => setEditing(true)}
                 aria-label="Edit profile"
-                className="absolute right-3 top-3 inline-flex h-8 items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.03] px-3 text-xs text-text-2 opacity-0 transition hover:bg-white/[0.07] hover:text-white group-hover:opacity-100 focus:opacity-100"
+                className="absolute right-3 top-3 inline-flex h-8 items-center gap-1.5 rounded-full border border-border bg-card px-3 text-xs text-text-2 opacity-0 transition hover:bg-card-2 hover:text-text group-hover:opacity-100 focus:opacity-100"
               >
                 <Pencil size={12} /> Edit
               </button>
               <div className="flex items-center gap-3">
-                <span className="relative inline-flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-gradient-brand text-sm font-semibold ring-1 ring-white/10">
+                <span className="relative inline-flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-gradient-brand text-sm font-semibold ring-1 ring-border">
                   {avatarUrl ? (
                     <Image
                       src={avatarUrl}
@@ -174,24 +172,39 @@ export function AccountView({
               </div>
               <button
                 onClick={() => setEditing(true)}
-                className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-2 text-xs text-text-2 hover:bg-white/[0.07] hover:text-white"
+                className="btn btn-ghost btn-sm mt-4 w-full"
               >
                 <Pencil size={12} /> Edit profile
               </button>
             </div>
 
-            <nav className="space-y-1 rounded-3xl border border-white/[0.06] bg-white/[0.02] p-3 backdrop-blur-xl">
-              {tabs.map(({ Icon, label }, i) => (
+            <nav className="space-y-1 rounded-3xl border border-border bg-card p-3 backdrop-blur-xl">
+              <span
+                aria-current="page"
+                className="flex w-full items-center gap-3 rounded-xl bg-card-2 px-3 py-2.5 text-sm text-text ring-1 ring-border"
+              >
+                <Package size={15} />
+                Orders
+              </span>
+              <Link
+                href="/wishlist"
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-text-2 transition hover:bg-card-2 hover:text-text"
+              >
+                <Heart size={15} />
+                Wishlist
+              </Link>
+              {comingSoonTabs.map(({ Icon, label }) => (
                 <button
                   key={label}
-                  className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition ${
-                    i === 0
-                      ? "bg-white/[0.07] text-white ring-1 ring-white/[0.08]"
-                      : "text-text-2 hover:bg-white/[0.04] hover:text-white"
-                  }`}
+                  type="button"
+                  aria-disabled="true"
+                  className="flex w-full cursor-not-allowed items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-text-2/70"
                 >
                   <Icon size={15} />
                   {label}
+                  <span className="ml-auto rounded-full border border-border bg-card px-2 py-0.5 text-[9px] font-semibold uppercase tracking-widest text-text-2">
+                    Soon
+                  </span>
                 </button>
               ))}
             </nav>
@@ -207,7 +220,7 @@ export function AccountView({
           </aside>
 
           <section>
-            <div className="rounded-3xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl">
+            <div className="rounded-3xl border border-border bg-card p-6 backdrop-blur-xl">
               <div className="mb-5 flex items-center justify-between">
                 <div className="font-display text-lg font-semibold">
                   Recent orders
@@ -220,7 +233,7 @@ export function AccountView({
               </div>
 
               {orders.length === 0 ? (
-                <div className="grid place-items-center rounded-2xl border border-dashed border-white/[0.08] py-12 text-center">
+                <div className="grid place-items-center rounded-2xl border border-dashed border-border py-12 text-center">
                   <Package size={22} className="text-text-2" />
                   <div className="mt-3 font-medium">No orders yet</div>
                   <p className="mt-1 max-w-xs text-sm text-text-2">
@@ -232,7 +245,7 @@ export function AccountView({
                   </Link>
                 </div>
               ) : (
-                <ul className="divide-y divide-white/[0.06]">
+                <ul className="divide-y divide-border">
                   {orders.map((o, i) => (
                     <motion.li
                       key={o.id}
@@ -241,7 +254,7 @@ export function AccountView({
                       transition={{ duration: 0.3, delay: i * 0.04 }}
                       className="flex items-center gap-4 py-4"
                     >
-                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-white/[0.04]">
+                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-card">
                         {o.firstItem?.image ? (
                           <Image
                             src={o.firstItem.image}
@@ -267,7 +280,7 @@ export function AccountView({
                       <span
                         className={`hidden rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest ring-1 md:inline ${
                           statusStyle[o.status] ??
-                          "bg-white/[0.05] text-text-2 ring-white/[0.06]"
+                          "bg-card-2 text-text-2 ring-border"
                         }`}
                       >
                         {o.status}
@@ -283,7 +296,6 @@ export function AccountView({
           </section>
         </div>
       </div>
-      <div className="h-32" />
 
       <EditProfileModal
         open={editing}
@@ -297,7 +309,7 @@ export function AccountView({
 
 function Stat({ l, v }: { l: string; v: string }) {
   return (
-    <div className="rounded-xl bg-white/[0.03] py-2">
+    <div className="rounded-xl bg-card py-2">
       <div className="text-sm font-semibold">{v}</div>
       <div className="text-[10px] uppercase tracking-widest text-text-2">{l}</div>
     </div>

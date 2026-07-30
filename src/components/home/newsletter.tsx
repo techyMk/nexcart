@@ -13,7 +13,7 @@ export function Newsletter() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-r from-primary-700/30 via-accent-purple/20 to-primary-700/30 p-10 text-center md:p-16"
+          className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-r from-primary-700/30 via-accent-purple/20 to-primary-700/30 p-10 text-center md:p-16"
         >
           <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
           <div className="pointer-events-none absolute -left-32 top-0 h-64 w-64 rounded-full bg-primary-500/40 blur-3xl" />

@@ -1,7 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
+import { useRef } from "react";
 import {
   Brain,
   Compass,
@@ -34,12 +35,29 @@ const cards = [
 ];
 
 export function AISection() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const orbTopY = useTransform(scrollYProgress, [0, 1], [60, -60]);
+  const orbBottomY = useTransform(scrollYProgress, [0, 1], [-60, 60]);
+
   return (
     <section className="section">
       <div className="container">
-        <div className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-br from-surface to-surface-2/40 p-8 md:p-14">
-          <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-accent-purple/30 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-primary-600/30 blur-3xl" />
+        <div
+          ref={ref}
+          className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-surface to-surface-2/40 p-8 md:p-14"
+        >
+          <motion.div
+            style={{ y: orbTopY }}
+            className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-accent-cyan/25 blur-3xl opacity-50 dark:opacity-100"
+          />
+          <motion.div
+            style={{ y: orbBottomY }}
+            className="pointer-events-none absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-primary-600/30 blur-3xl opacity-50 dark:opacity-100"
+          />
           <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
 
           <div className="relative grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-center">
@@ -47,7 +65,7 @@ export function AISection() {
               <div className="chip">
                 <Brain size={12} /> NexCart Intelligence™
               </div>
-              <h2 className="mt-4 font-display text-4xl font-semibold leading-tight tracking-tight md:text-5xl">
+              <h2 className="section-title mt-4">
                 Shopping that{" "}
                 <span className="text-gradient-brand">thinks ahead</span>.
               </h2>
@@ -64,9 +82,9 @@ export function AISection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: i * 0.06 }}
-                    className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4"
+                    className="rounded-2xl border border-border bg-card p-4"
                   >
-                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.05] text-primary-300 ring-1 ring-white/[0.06]">
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-accent-cyan/10 text-accent-cyan ring-1 ring-accent-cyan/20">
                       <Icon size={16} />
                     </span>
                     <div className="mt-3 text-sm font-semibold">{title}</div>
@@ -91,16 +109,16 @@ function AIChatPreview() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
-      className="relative mx-auto w-full max-w-md rounded-3xl border border-white/[0.08] bg-bg/70 p-4 shadow-card backdrop-blur-2xl"
+      className="relative mx-auto w-full max-w-md rounded-3xl border border-border bg-bg/70 p-4 shadow-card backdrop-blur-2xl"
     >
-      <div className="mb-4 flex items-center justify-between border-b border-white/[0.06] pb-3">
+      <div className="mb-4 flex items-center justify-between border-b border-border pb-3">
         <div className="flex items-center gap-2">
           <div className="grid h-8 w-8 place-items-center overflow-hidden rounded-lg bg-gradient-brand">
             <Image
               src="/brand/bot-icon.webp"
               alt=""
-              width={256}
-              height={256}
+              width={48}
+              height={48}
               className="h-6 w-6 object-contain drop-shadow"
             />
           </div>
@@ -118,9 +136,9 @@ function AIChatPreview() {
         <div className="ml-auto max-w-[80%] rounded-2xl rounded-br-md bg-gradient-brand px-3 py-2 text-white">
           I need a laptop for editing 4K video under $2500.
         </div>
-        <div className="max-w-[85%] rounded-2xl rounded-bl-md bg-white/[0.04] px-3 py-2 text-text">
+        <div className="max-w-[85%] rounded-2xl rounded-bl-md bg-card px-3 py-2 text-text">
           Got it. I&apos;ve ranked 12 options. Top pick:{" "}
-          <span className="font-semibold text-white">MacBook Pro 14” M3 Max</span>{" "}
+          <span className="font-semibold text-text">MacBook Pro 14” M3 Max</span>{" "}
           — best sustained performance, color-accurate display, 22h battery.
         </div>
         <motion.div
@@ -128,11 +146,11 @@ function AIChatPreview() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.6 }}
-          className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-3"
+          className="rounded-2xl border border-border bg-card p-3"
         >
           <div className="flex items-center justify-between text-xs text-text-2">
             <span>Why this match?</span>
-            <span className="text-emerald-400">98% match</span>
+            <span className="text-accent-cyan">98% match</span>
           </div>
           <ul className="mt-2 space-y-1 text-xs">
             <li className="flex items-center gap-2 text-text">

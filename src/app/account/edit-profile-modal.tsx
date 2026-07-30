@@ -207,12 +207,12 @@ export function EditProfileModal({
               role="dialog"
               aria-modal="true"
               aria-labelledby="edit-profile-title"
-              className="pointer-events-auto relative w-full max-w-lg overflow-hidden rounded-3xl border border-white/[0.08] bg-surface/95 shadow-card backdrop-blur-2xl"
+              className="pointer-events-auto relative w-full max-w-lg overflow-hidden rounded-3xl border border-border bg-surface/95 shadow-card backdrop-blur-2xl"
             >
               <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary-500/20 blur-3xl" />
               <div className="pointer-events-none absolute -left-16 -bottom-16 h-48 w-48 rounded-full bg-accent-purple/20 blur-3xl" />
 
-              <div className="relative flex items-center justify-between border-b border-white/[0.06] px-6 py-4">
+              <div className="relative flex items-center justify-between border-b border-border px-6 py-4">
                 <div className="flex items-center gap-2">
                   <span className="grid h-7 w-7 place-items-center rounded-lg bg-primary-500/15 text-primary-300 ring-1 ring-primary-500/30">
                     <Pencil size={13} />
@@ -227,7 +227,7 @@ export function EditProfileModal({
                 <button
                   type="button"
                   onClick={() => !busy && onClose()}
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-2 hover:bg-white/[0.05] hover:text-white"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-2 hover:bg-card-2 hover:text-text"
                   aria-label="Close"
                 >
                   <X size={16} />
@@ -242,7 +242,7 @@ export function EditProfileModal({
                     onClick={() => fileInputRef.current?.click()}
                     disabled={uploading}
                     aria-label="Change avatar"
-                    className="group relative inline-flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-brand text-lg font-semibold shadow-glow ring-2 ring-white/10 transition hover:ring-white/30 disabled:cursor-wait"
+                    className="group relative inline-flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-brand text-lg font-semibold shadow-glow ring-2 ring-border transition hover:ring-text/30 disabled:cursor-wait"
                   >
                     {avatarUrl ? (
                       <Image
@@ -286,7 +286,7 @@ export function EditProfileModal({
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={uploading}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-xs hover:bg-white/[0.07] disabled:cursor-not-allowed disabled:opacity-60"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:bg-card-2 disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         {uploading ? (
                           <Loader2 size={12} className="animate-spin" />
@@ -304,7 +304,7 @@ export function EditProfileModal({
                           type="button"
                           onClick={onRemoveAvatar}
                           disabled={uploading}
-                          className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-xs text-text-2 hover:bg-white/[0.07] hover:text-rose-300 disabled:opacity-60"
+                          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-text-2 hover:bg-card-2 hover:text-rose-300 disabled:opacity-60"
                         >
                           <Trash2 size={12} /> Remove
                         </button>
@@ -319,9 +319,9 @@ export function EditProfileModal({
                 {/* Preset avatars */}
                 <div className="space-y-3 pt-1">
                   <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.18em] text-text-2">
-                    <span className="h-px flex-1 bg-white/[0.06]" />
+                    <span className="h-px flex-1 bg-border" />
                     Or pick a preset
-                    <span className="h-px flex-1 bg-white/[0.06]" />
+                    <span className="h-px flex-1 bg-border" />
                   </div>
                   <div className="grid grid-cols-6 gap-2 sm:grid-cols-6">
                     {PRESETS.map((name) => {
@@ -336,10 +336,10 @@ export function EditProfileModal({
                           aria-label={`Use ${name} avatar`}
                           aria-pressed={selected}
                           title={name[0].toUpperCase() + name.slice(1)}
-                          className={`relative aspect-square overflow-hidden rounded-full bg-white/[0.04] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 ${
+                          className={`relative aspect-square overflow-hidden rounded-full bg-card transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 ${
                             selected
                               ? "ring-2 ring-primary-400 shadow-glow"
-                              : "ring-1 ring-white/10 hover:ring-white/30"
+                              : "ring-1 ring-border hover:ring-text/30"
                           }`}
                         >
                           <Image
@@ -371,7 +371,7 @@ export function EditProfileModal({
                     required
                     maxLength={80}
                     placeholder="Alex Vance"
-                    className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm outline-none focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/20"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/20"
                   />
                 </label>
 
@@ -387,7 +387,7 @@ export function EditProfileModal({
                     type="button"
                     onClick={onClose}
                     disabled={busy}
-                    className="rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2 text-sm text-text-2 hover:text-white disabled:opacity-60"
+                    className="rounded-full border border-border bg-card px-4 py-2 text-sm text-text-2 hover:text-text disabled:opacity-60"
                   >
                     Cancel
                   </button>
