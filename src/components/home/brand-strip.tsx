@@ -27,22 +27,22 @@ function BrandMark({ brand, hidden }: { brand: Brand; hidden?: boolean }) {
         role={hidden ? undefined : "img"}
         aria-label={hidden ? undefined : brand.name}
         aria-hidden={hidden || undefined}
-        className="h-5 shrink-0 bg-text opacity-50 transition-opacity hover:opacity-100"
-        style={{ width: `${1.25 * brand.aspect}rem`, ...maskStyle(brand.slug, "cover") }}
+        className="h-4 shrink-0 bg-text opacity-50 transition-opacity hover:opacity-100 sm:h-5"
+        style={{ aspectRatio: brand.aspect, ...maskStyle(brand.slug, "cover") }}
       />
     );
   }
   return (
     <span
       aria-hidden={hidden || undefined}
-      className="flex shrink-0 items-center gap-2.5 opacity-50 transition-opacity hover:opacity-100"
+      className="flex shrink-0 items-center gap-2 opacity-50 transition-opacity hover:opacity-100 sm:gap-2.5"
     >
       <span
         aria-hidden
-        className="h-6 w-6 shrink-0 bg-text"
+        className="h-5 w-5 shrink-0 bg-text sm:h-6 sm:w-6"
         style={maskStyle(brand.slug, "contain")}
       />
-      <span className="font-display text-2xl font-semibold tracking-tight">
+      <span className="font-display text-xl font-semibold tracking-tight sm:text-2xl">
         {brand.name}
       </span>
     </span>
@@ -51,13 +51,13 @@ function BrandMark({ brand, hidden }: { brand: Brand; hidden?: boolean }) {
 
 export function BrandStrip() {
   return (
-    <section className="relative z-10 pt-16 md:pt-20">
+    <section className="relative z-10 pt-10 sm:pt-16 md:pt-20">
       <div className="container">
         <div className="text-center text-xs uppercase tracking-[0.2em] text-text-2">
           Trusted by the brands you already love
         </div>
-        <div className="mt-6 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]">
-          <div className="flex w-max items-center gap-16 animate-marquee hover:[animation-play-state:paused]">
+        <div className="mt-5 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] sm:mt-6">
+          <div className="flex w-max items-center gap-10 animate-marquee hover:[animation-play-state:paused] sm:gap-16">
             {brands.map((b) => (
               <BrandMark key={b.slug} brand={b} />
             ))}

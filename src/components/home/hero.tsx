@@ -191,7 +191,7 @@ export function Hero() {
       onPointerDown={() => setPressed(true)}
       onPointerUp={() => setPressed(false)}
       onPointerCancel={() => setPressed(false)}
-      className="relative min-h-[86svh] max-h-[92svh] w-full overflow-hidden focus-visible:outline-none"
+      className="relative min-h-[72svh] max-h-[92svh] w-full overflow-hidden focus-visible:outline-none md:min-h-[86svh]"
     >
       <style>{`@keyframes hero-slide-progress { from { width: 0% } to { width: 100% } }`}</style>
 
@@ -229,13 +229,13 @@ export function Hero() {
           <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-bg/80 to-transparent" />
 
           {/* Slide content */}
-          <div className="relative flex min-h-[86svh] max-h-[92svh] items-center">
+          <div className="relative flex min-h-[72svh] max-h-[92svh] items-center md:min-h-[86svh]">
             <div className="mx-auto w-full max-w-[1280px] px-5">
               <motion.div
                 variants={contentVariants}
                 initial="hidden"
                 animate="show"
-                className="max-w-2xl pb-24 pt-24 md:pt-28"
+                className="max-w-2xl pb-20 pt-24 sm:pb-24 md:pt-28"
               >
                 <motion.div variants={itemVariants}>
                   {aiPick ? (
@@ -251,7 +251,7 @@ export function Hero() {
 
                 <motion.h1
                   variants={itemVariants}
-                  className="mt-5 font-display text-4xl font-bold leading-[1.04] tracking-[-0.03em] text-text sm:text-6xl lg:text-7xl"
+                  className="mt-4 font-display text-[2.75rem] font-bold leading-[1.04] tracking-[-0.03em] text-text sm:text-6xl md:mt-5 lg:text-7xl"
                 >
                   <GradientName name={p.name} gradient={slide.gradient} />
                 </motion.h1>
@@ -279,7 +279,7 @@ export function Hero() {
 
                 <motion.div
                   variants={itemVariants}
-                  className="mt-7 flex flex-wrap items-center gap-3"
+                  className="mt-6 flex flex-wrap items-center gap-3 md:mt-7"
                 >
                   <button
                     type="button"
@@ -315,7 +315,7 @@ export function Hero() {
 
                 <motion.p
                   variants={itemVariants}
-                  className="mt-6 text-xs text-text-2"
+                  className="mt-5 text-xs text-text-2 md:mt-6"
                 >
                   Free delivery over $500 · 7-day returns
                 </motion.p>
@@ -369,13 +369,13 @@ export function Hero() {
             )}
           </div>
 
-          {/* Prev / next arrows (desktop) */}
-          <div className="pointer-events-auto hidden items-center gap-2 md:flex">
+          {/* Prev / next arrows — compact on mobile, full-size from md up */}
+          <div className="pointer-events-auto flex items-center gap-2">
             <button
               type="button"
               aria-label="Previous slide"
               onClick={() => paginate(-1)}
-              className="grid h-11 w-11 place-items-center rounded-full border border-border bg-card text-text backdrop-blur-md transition-colors hover:bg-card-2"
+              className="grid h-9 w-9 place-items-center rounded-full border border-border bg-card text-text backdrop-blur-md transition-colors hover:bg-card-2 md:h-11 md:w-11"
             >
               <ArrowLeft size={18} />
             </button>
@@ -383,7 +383,7 @@ export function Hero() {
               type="button"
               aria-label="Next slide"
               onClick={() => paginate(1)}
-              className="grid h-11 w-11 place-items-center rounded-full border border-border bg-card text-text backdrop-blur-md transition-colors hover:bg-card-2"
+              className="grid h-9 w-9 place-items-center rounded-full border border-border bg-card text-text backdrop-blur-md transition-colors hover:bg-card-2 md:h-11 md:w-11"
             >
               <ArrowRight size={18} />
             </button>
@@ -392,9 +392,9 @@ export function Hero() {
       </div>
 
       {/* Warm the cache for the remaining slide images so transitions never flash */}
-      <div aria-hidden className="pointer-events-none absolute h-px w-px overflow-hidden opacity-0">
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 h-px overflow-hidden opacity-0">
         {SLIDES.filter((_, i) => i !== index).map((s) => (
-          <div key={s.slug} className="relative h-px w-px">
+          <div key={s.slug} className="relative h-px w-full">
             <Image
               src={s.product.images[0]}
               alt=""

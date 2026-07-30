@@ -48,8 +48,8 @@ export function Footer() {
     <footer className="relative z-10 mt-24 border-t border-border bg-bg/60 backdrop-blur-xl">
       <div className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-primary-500/40 to-transparent" />
       <div className="container py-16">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-2 gap-10 lg:grid-cols-5">
+          <div className="col-span-2 lg:col-span-2">
             <Link
               href="/"
               aria-label="NexCart home"
@@ -85,7 +85,7 @@ export function Footer() {
             </div>
           </div>
           {cols.map((c) => (
-            <div key={c.title}>
+            <div key={c.title} className="col-span-1">
               <div className="mb-4 text-xs uppercase tracking-[0.18em] text-text-2">
                 {c.title}
               </div>

@@ -87,6 +87,7 @@ function OrderSuccessContent() {
                       src={l.image}
                       alt={l.name}
                       fill
+                      sizes="48px"
                       className="object-cover"
                     />
                   </div>

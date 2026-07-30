@@ -721,7 +721,7 @@ export default function CheckoutPage() {
               {lines.map((l) => (
                 <li key={l.id} className="flex items-center gap-3">
                   <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-card">
-                    <Image src={l.image} alt={l.name} fill className="object-cover" />
+                    <Image src={l.image} alt={l.name} fill sizes="48px" className="object-cover" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm">{l.name}</div>

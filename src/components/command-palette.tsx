@@ -214,7 +214,7 @@ export function CommandPalette() {
                           }}
                           left={
                             <span className="relative inline-block h-9 w-9 overflow-hidden rounded-lg bg-card">
-                              <Image src={p.images[0]} alt="" fill className="object-cover" />
+                              <Image src={p.images[0]} alt="" fill sizes="36px" className="object-cover" />
                             </span>
                           }
                           label={p.name}

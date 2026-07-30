@@ -255,7 +255,7 @@ export default function NotFound() {
                       className="group flex items-center gap-2 rounded-2xl border border-border bg-bg/70 p-2 pr-3 shadow-card backdrop-blur-xl transition hover:border-text/20"
                     >
                       <span className="relative h-10 w-10 overflow-hidden rounded-xl bg-card">
-                        <Image src={p.images[0]} alt="" fill className="object-cover" />
+                        <Image src={p.images[0]} alt="" fill sizes="40px" className="object-cover" />
                       </span>
                       <span className="min-w-0">
                         <span className="block max-w-[120px] truncate text-xs font-medium">

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { BrandLogo } from "@/components/brand-logo";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
   Headphones,
@@ -239,7 +239,7 @@ export function Navbar() {
         >
           <BrandLogo
             priority
-            className="h-9 w-auto transition-transform group-hover:scale-[1.02] sm:h-10 md:h-16"
+            className="h-12 w-auto transition-transform group-hover:scale-[1.02] md:h-16"
           />
         </Link>
 
@@ -464,6 +464,43 @@ const trustItems = [
   { Icon: Headphones, label: "24/7 support" },
 ];
 
+/* Mobile-only (below sm) auto-rotating ticker cycling through every trust
+   offer, one at a time. Under reduced motion it still rotates but swaps
+   instantly instead of sliding. */
+function MobileTrustTicker() {
+  const reduceMotion = useReducedMotion();
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(
+      () => setIndex((i) => (i + 1) % trustItems.length),
+      3000,
+    );
+    return () => clearInterval(id);
+  }, []);
+
+  const { Icon, label } = trustItems[index];
+
+  return (
+    /* h-full + overflow-hidden clips the vertical slide inside the h-8 row. */
+    <span className="flex h-full w-full items-center justify-center overflow-hidden sm:hidden">
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span
+          key={label}
+          initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -8 }}
+          transition={{ duration: reduceMotion ? 0 : 0.3, ease: "easeOut" }}
+          className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap"
+        >
+          <Icon size={12} className="text-primary-300" />
+          <span>{label}</span>
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+}
+
 function TrustRow({ collapsed }: { collapsed: boolean }) {
   // Collapses via grid-template-rows (GPU-friendly, no max-height layout
   // thrash on every scroll-threshold crossing).
@@ -483,12 +520,14 @@ function TrustRow({ collapsed }: { collapsed: boolean }) {
           )}
         >
           <div className="container flex h-8 items-center justify-center gap-x-6 gap-y-1 overflow-hidden text-[11px] text-text-2 sm:gap-x-8">
+            {/* Below sm the static items collapse into a rotating ticker so
+                mobile users still see all four offers. */}
+            <MobileTrustTicker />
             {trustItems.map(({ Icon, label }, i) => (
               <span
                 key={label}
                 className={cn(
-                  "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap",
-                  i > 0 && "hidden sm:inline-flex",
+                  "hidden shrink-0 items-center gap-1.5 whitespace-nowrap sm:inline-flex",
                   i > 1 && "sm:hidden md:inline-flex",
                 )}
               >

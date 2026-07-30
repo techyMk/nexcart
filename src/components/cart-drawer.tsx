@@ -165,7 +165,7 @@ export function CartDrawer() {
                       className="flex gap-3 rounded-2xl border border-border bg-card p-3"
                     >
                       <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-card">
-                        <Image src={l.image} alt={l.name} fill className="object-cover" />
+                        <Image src={l.image} alt={l.name} fill sizes="80px" className="object-cover" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-start justify-between gap-2">

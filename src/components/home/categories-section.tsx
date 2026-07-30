@@ -2,10 +2,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { categories, type Category } from "@/lib/data";
+import { ScrollRail } from "@/components/scroll-rail";
 
 export function CategoriesSection() {
   return (
-    <section className="section">
+    <section className="section py-10 sm:py-20 md:py-28">
       <div className="container">
         <div className="flex items-end justify-between gap-4">
           <div>
@@ -19,11 +20,18 @@ export function CategoriesSection() {
           </Link>
         </div>
 
-        <div className="no-scrollbar -mx-5 mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-5 px-5 pb-2 md:mt-10 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0">
+        {/* Arrows and autoplay are mobile-only; md+ keeps the original static
+            rail/grid so desktop renders exactly as before. */}
+        <ScrollRail
+          ariaLabel="Product categories"
+          arrowClassName="md:hidden"
+          autoPlay
+          autoPlayMaxWidth={767}
+          className="no-scrollbar -mx-5 mt-6 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-5 px-5 pb-2 sm:mt-8 md:mt-10 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0">
           {categories.map((cat) => (
             <CategoryTile key={cat.id} cat={cat} />
           ))}
-        </div>
+        </ScrollRail>
       </div>
     </section>
   );
@@ -40,7 +48,7 @@ function CategoryTile({ cat }: { cat: Category }) {
           src={cat.image}
           alt={cat.name}
           fill
-          sizes="(max-width: 1023px) 180px, 25vw"
+          sizes="(max-width: 1023px) 180px, 300px"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         {/* Bottom scrim over the photo — intentionally stays dark in both themes */}

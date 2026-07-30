@@ -319,7 +319,9 @@ export function AIAssistantFab() {
         transition={{ delay: 0.6, type: "spring", stiffness: 280 }}
         whileHover={{ scale: 1.05 }}
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-20 right-4 z-[60] inline-flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-gradient-brand text-white shadow-glow ring-1 ring-white/20 md:bottom-6 md:right-6"
+        className={`fixed bottom-20 right-4 z-[60] inline-flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-gradient-brand text-white shadow-glow ring-1 ring-white/20 md:bottom-6 md:right-6 ${
+          open ? "max-sm:hidden" : ""
+        }`}
         aria-label={open ? "Close AI assistant" : "Open AI assistant"}
       >
         <span className="absolute inset-0 -z-10 animate-pulse-slow rounded-full bg-gradient-brand opacity-50 blur-xl" />
@@ -343,9 +345,9 @@ export function AIAssistantFab() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 360, damping: 32 }}
-            className="fixed bottom-[8.5rem] right-3 z-[60] flex h-[70vh] w-[94vw] max-w-sm flex-col overflow-hidden rounded-3xl border border-border bg-surface/95 shadow-card backdrop-blur-2xl sm:right-6 md:bottom-24"
+            className="fixed bottom-[calc(4.25rem+env(safe-area-inset-bottom))] right-3 z-[60] flex h-[min(70svh,560px)] max-h-[calc(100svh-6rem-env(safe-area-inset-bottom))] w-[calc(100vw-1.5rem)] max-w-sm flex-col overflow-hidden rounded-3xl border border-border bg-surface/95 shadow-card backdrop-blur-2xl sm:bottom-[8.5rem] sm:right-6 sm:h-[70vh] sm:max-h-none sm:w-[94vw] md:bottom-24"
           >
-            <div className="relative border-b border-border p-5">
+            <div className="relative border-b border-border p-4 sm:p-5">
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary-400/40 to-transparent" />
               <div className="flex items-center gap-3">
                 <div className="grid h-10 w-10 place-items-center overflow-hidden rounded-xl bg-gradient-brand shadow-glow">
@@ -374,13 +376,20 @@ export function AIAssistantFab() {
                     <RefreshCw size={14} />
                   </button>
                 )}
+                <button
+                  onClick={() => setOpen(false)}
+                  aria-label="Close chat"
+                  className="grid h-8 w-8 place-items-center rounded-full text-text-2 hover:bg-card-2 hover:text-text sm:hidden"
+                >
+                  <X size={16} />
+                </button>
               </div>
             </div>
 
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-5">
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 sm:p-5">
               {messages.length === 0 ? (
                 <div className="space-y-2">
-                  <div className="rounded-2xl border border-border bg-card p-3 text-sm text-text">
+                  <div className="rounded-2xl border border-border bg-card p-3 text-[13px] text-text sm:text-sm">
                     Hi! I&apos;m NexCart Intelligence. Ask me anything about
                     our products, policies, shipping, returns, or company.
                   </div>
@@ -391,7 +400,7 @@ export function AIAssistantFab() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.06 }}
                       onClick={() => void send(s)}
-                      className="block w-full rounded-xl border border-border bg-card px-4 py-2.5 text-left text-sm text-text-2 transition hover:border-text/20 hover:bg-card-2 hover:text-text"
+                      className="block w-full rounded-xl border border-border bg-card px-4 py-2.5 text-left text-[13px] text-text-2 transition hover:border-text/20 hover:bg-card-2 hover:text-text sm:text-sm"
                     >
                       {s}
                     </motion.button>
@@ -418,8 +427,8 @@ export function AIAssistantFab() {
                         <div
                           className={
                             m.role === "user"
-                              ? "rounded-2xl rounded-br-md bg-gradient-brand px-3 py-2 text-sm text-white"
-                              : "rounded-2xl rounded-bl-md bg-card px-3 py-2 text-sm text-text"
+                              ? "rounded-2xl rounded-br-md bg-gradient-brand px-3 py-2 text-[13px] text-white sm:text-sm"
+                              : "rounded-2xl rounded-bl-md bg-card px-3 py-2 text-[13px] text-text sm:text-sm"
                           }
                         >
                           {m.content ? (
@@ -492,7 +501,7 @@ export function AIAssistantFab() {
             <div className="border-t border-border p-3">
               <form
                 onSubmit={onSubmit}
-                className="flex items-center gap-2 rounded-2xl border border-border bg-card px-3 py-2"
+                className="flex items-center gap-2 rounded-2xl border border-border bg-card px-3 py-2 max-sm:py-0"
               >
                 <input
                   ref={inputRef}
@@ -500,7 +509,7 @@ export function AIAssistantFab() {
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask anything about NexCart…"
                   disabled={streaming}
-                  className="flex-1 bg-transparent text-sm outline-none placeholder:text-text-2 disabled:opacity-60"
+                  className="flex-1 bg-transparent text-sm outline-none placeholder:text-text-2 disabled:opacity-60 max-sm:h-10"
                 />
                 <button
                   type="submit"
@@ -529,7 +538,7 @@ export function AIAssistantFab() {
  */
 function ChatMarkdown({ content }: { content: string }) {
   return (
-    <div className="text-sm leading-relaxed [&>:first-child]:mt-0 [&>:last-child]:mb-0">
+    <div className="text-[13px] leading-relaxed sm:text-sm [&>:first-child]:mt-0 [&>:last-child]:mb-0">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{

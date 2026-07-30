@@ -13,9 +13,9 @@ const items = [
 
 export function FeatureStrip() {
   return (
-    <section className="relative z-10 pt-12 md:pt-16">
+    <section className="relative z-10 pt-10 sm:pt-12 md:pt-16">
       <div className="container">
-        <div className="grid grid-cols-2 gap-3 rounded-3xl border border-border bg-card p-3 backdrop-blur-xl md:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 rounded-3xl border border-border bg-card p-2 backdrop-blur-xl sm:gap-3 sm:p-3 md:grid-cols-5">
           {items.map(({ Icon, title, note }, i) => (
             <motion.div
               key={title}
@@ -23,9 +23,9 @@ export function FeatureStrip() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.05 }}
-              className="flex items-center gap-3 rounded-2xl px-3 py-3 transition hover:bg-card"
+              className="flex items-center gap-2.5 rounded-2xl px-2.5 py-2.5 transition last:col-span-2 hover:bg-card sm:gap-3 sm:px-3 sm:py-3 md:last:col-span-1"
             >
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary-600/20 to-accent-purple/20 text-primary-300 ring-1 ring-border">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary-600/20 to-accent-purple/20 text-primary-300 ring-1 ring-border sm:h-10 sm:w-10">
                 <Icon size={16} />
               </span>
               <div className="min-w-0">

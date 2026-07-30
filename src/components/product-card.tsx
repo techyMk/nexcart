@@ -39,7 +39,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       </div>
 
       <div className="relative aspect-[4/5] overflow-hidden bg-card">
-        <Link href={`/product/${product.slug}`} className="block h-full">
+        <Link href={`/product/${product.slug}`} className="relative block h-full">
           <Image
             src={product.images[0]}
             alt={product.name}
@@ -92,7 +92,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           <Heart size={15} className={wishlisted ? "fill-current" : ""} />
         </button>
 
-        <div className="pointer-events-none absolute inset-x-2.5 bottom-2.5 flex translate-y-3 gap-1.5 opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 focus-within:pointer-events-auto focus-within:translate-y-0 focus-within:opacity-100 max-md:pointer-events-auto max-md:translate-y-0 max-md:opacity-100">
+        <div className="pointer-events-none absolute inset-x-2.5 bottom-2.5 flex translate-y-3 flex-col gap-1.5 opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 focus-within:pointer-events-auto focus-within:translate-y-0 focus-within:opacity-100 max-md:pointer-events-auto max-md:translate-y-0 max-md:opacity-100 sm:flex-row sm:flex-wrap">
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -106,7 +106,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
               setAdded(true);
               setTimeout(() => setAdded(false), 900);
             }}
-            className="inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-white px-2 py-2.5 text-xs font-semibold text-slate-950 ring-1 ring-white/20 transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400"
+            className="inline-flex w-full min-w-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-white px-2 py-2 text-[11px] font-semibold text-slate-950 ring-1 ring-white/20 transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 sm:w-auto sm:flex-auto sm:py-2.5 sm:text-xs"
           >
             {added ? (
               <>
@@ -137,7 +137,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
               cart.closeCart();
               router.push("/checkout");
             }}
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-gradient-brand px-3 py-2.5 text-xs font-semibold text-white ring-1 ring-white/20 transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 disabled:opacity-60"
+            className="inline-flex w-full items-center justify-center whitespace-nowrap rounded-full bg-gradient-brand px-3 py-2 text-[11px] font-semibold text-white ring-1 ring-white/20 transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 disabled:opacity-60 sm:w-auto sm:py-2.5 sm:text-xs"
           >
             Buy now
           </button>

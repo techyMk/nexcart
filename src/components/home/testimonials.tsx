@@ -13,9 +13,9 @@ const quoteFixes: Record<string, string> = {
 
 export function Testimonials() {
   return (
-    <section className="section">
+    <section className="section py-10 sm:py-20 md:py-28">
       <div className="container">
-        <div className="mx-auto mb-12 max-w-2xl text-center">
+        <div className="mx-auto mb-8 max-w-2xl text-center sm:mb-12">
           <div className="section-eyebrow">Wall of love</div>
           <h2 className="section-title mt-2">
             Real people, real{" "}
@@ -27,7 +27,7 @@ export function Testimonials() {
           </p>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid gap-4 sm:gap-5 md:grid-cols-3">
           {testimonials.map((t, i) => (
             <div key={t.name} className={i === 1 ? "md:translate-y-8" : ""}>
               <motion.figure
@@ -35,7 +35,7 @@ export function Testimonials() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
-                className={`relative h-full rounded-3xl border border-border p-6 ${
+                className={`relative h-full rounded-3xl border border-border p-5 sm:p-6 ${
                   i === 0
                     ? "bg-card-2 ring-1 ring-primary-400/20 dark:bg-transparent dark:bg-gradient-to-b dark:from-white/[0.05] dark:to-transparent"
                     : "bg-card"
@@ -58,14 +58,14 @@ export function Testimonials() {
                   “{quoteFixes[t.name] ?? t.quote}”
                 </blockquote>
 
-                <figcaption className="relative mt-6 flex items-center gap-3">
+                <figcaption className="relative mt-5 flex items-center gap-3 sm:mt-6">
                   <span className="inline-flex shrink-0 rounded-full bg-gradient-brand p-[1.5px]">
                     <Image
                       src={t.avatar}
                       alt={t.name}
                       width={40}
                       height={40}
-                      className="rounded-full"
+                      className="h-10 w-10 rounded-full object-cover"
                     />
                   </span>
                   <div>

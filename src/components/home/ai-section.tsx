@@ -44,11 +44,11 @@ export function AISection() {
   const orbBottomY = useTransform(scrollYProgress, [0, 1], [-60, 60]);
 
   return (
-    <section className="section">
+    <section className="section py-10 sm:py-20 md:py-28">
       <div className="container">
         <div
           ref={ref}
-          className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-surface to-surface-2/40 p-8 md:p-14"
+          className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-surface to-surface-2/40 p-5 sm:p-8 md:p-14"
         >
           <motion.div
             style={{ y: orbTopY }}
@@ -60,7 +60,7 @@ export function AISection() {
           />
           <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
 
-          <div className="relative grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-center">
+          <div className="relative grid gap-8 sm:gap-12 lg:grid-cols-[1fr_1fr] lg:items-center">
             <div>
               <div className="chip">
                 <Brain size={12} /> NexCart Intelligence™
@@ -69,12 +69,12 @@ export function AISection() {
                 Shopping that{" "}
                 <span className="text-gradient-brand">thinks ahead</span>.
               </h2>
-              <p className="mt-4 max-w-lg text-text-2">
+              <p className="mt-3 max-w-lg text-text-2 sm:mt-4">
                 Our intelligence layer continuously learns from millions of
                 signals to deliver the right product at the perfect moment —
                 across every device.
               </p>
-              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2">
                 {cards.map(({ Icon, title, desc }, i) => (
                   <motion.div
                     key={title}
