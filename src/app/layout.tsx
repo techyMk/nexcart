@@ -51,10 +51,11 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-// Runs before paint: applies the persisted theme class so there is no flash
-// of the wrong theme. Any error (blocked storage, bad value) falls back to
-// dark, which matches the SSR'd class.
-const themeInitScript = `(function(){try{if(localStorage.getItem('nexcart-theme')==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){document.documentElement.classList.add('dark')}})();`;
+// Runs before paint: applies the persisted theme class, falling back to the
+// OS preference (prefers-color-scheme) when the user hasn't chosen one, so
+// there is no flash of the wrong theme. Any error falls back to dark, which
+// matches the SSR'd class.
+const themeInitScript = `(function(){try{var s=localStorage.getItem('nexcart-theme');var dark=s?s==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',dark)}catch(e){document.documentElement.classList.add('dark')}})();`;
 
 export default function RootLayout({
   children,

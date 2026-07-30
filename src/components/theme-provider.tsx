@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useState,
   type ReactNode,
 } from "react";
@@ -27,6 +28,24 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       ? "dark"
       : "light";
   });
+
+  // Follow live OS theme changes, but only while the user hasn't made an
+  // explicit choice — once nexcart-theme is stored, that choice wins.
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = (e: MediaQueryListEvent) => {
+      try {
+        if (localStorage.getItem(STORAGE_KEY)) return;
+      } catch {
+        return;
+      }
+      const next: Theme = e.matches ? "dark" : "light";
+      document.documentElement.classList.toggle("dark", next === "dark");
+      setTheme(next);
+    };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   const toggle = useCallback(() => {
     setTheme((prev) => {
