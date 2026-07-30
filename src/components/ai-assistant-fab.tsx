@@ -19,6 +19,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuth } from "@/components/auth-provider";
 import { createClient } from "@/lib/supabase/client";
+import { products, type Product } from "@/lib/data";
 
 type Role = "user" | "assistant";
 type Message = {
@@ -28,12 +29,47 @@ type Message = {
   sources?: string[];
 };
 
-const SUGGESTIONS = [
+const GENERAL_QUESTIONS = [
   "What does NexCart sell?",
   "What's your return policy?",
   "How do I track my order?",
   "Tell me about NexCart Intelligence.",
+  "How long does standard delivery take?",
+  "When is delivery free?",
+  "What payment methods do you accept?",
+  "How does the 2-year warranty work?",
+  "What's on sale right now?",
+  "How do AI Picks work?",
+  "Can I cancel or change my order?",
+  "Do I need an account to place an order?",
 ];
+
+const PRODUCT_TEMPLATES: ((p: Product) => string)[] = [
+  (p) => `How much is the ${p.name}?`,
+  (p) => `Is the ${p.name} in stock?`,
+  (p) => `Tell me about the ${p.name}.`,
+  (p) => `Is the ${p.name} worth buying?`,
+  (p) => `What's a good alternative to the ${p.name}?`,
+];
+
+/** Fisher–Yates shuffle, first n items. */
+function sample<T>(arr: readonly T[], n: number): T[] {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy.slice(0, n);
+}
+
+/** 2 questions about random catalog products + 2 general ones, shuffled.
+ *  Called client-side only (when the panel opens), so Math.random is safe. */
+function pickSuggestions(): string[] {
+  const productQs = sample(products, 2).map(
+    (p) => PRODUCT_TEMPLATES[Math.floor(Math.random() * PRODUCT_TEMPLATES.length)](p),
+  );
+  return sample([...productQs, ...sample(GENERAL_QUESTIONS, 2)], 4);
+}
 
 function uid() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -44,6 +80,11 @@ export function AIAssistantFab() {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  // Fresh random set each time the panel opens (client-only, no SSR mismatch).
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  useEffect(() => {
+    if (open) setSuggestions(pickSuggestions());
+  }, [open]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -343,7 +384,7 @@ export function AIAssistantFab() {
                     Hi! I&apos;m NexCart Intelligence. Ask me anything about
                     our products, policies, shipping, returns, or company.
                   </div>
-                  {SUGGESTIONS.map((s, i) => (
+                  {suggestions.map((s, i) => (
                     <motion.button
                       key={s}
                       initial={{ opacity: 0, x: 16 }}
